@@ -11,12 +11,23 @@ import pandas as pd
 import re
 import numpy as np
 import argparse
+import tensorflow as tf
+from tensorflow.python import keras
+
+import pickle
+
 
 from matplotlib import pyplot as plt
 
 from wordcloud import WordCloud, STOPWORDS 
 
 from sklearn.model_selection import train_test_split
+
+from keras.preprocessing.sequence import pad_sequences
+from keras.models import Sequential, load_model
+from keras.layers import Embedding, LSTM, Dense, Activation, Dropout
+from keras.callbacks import EarlyStopping, ModelCheckpoint
+from keras import backend as k
 
 SPLIT_PATTERN_WITH_DILIMITER = r'([`\-=~!@#$%^&*()_+\[\]{};\'\\:"|<,./<>?\s])\s*'
 SPLIT_PATTERN_NO_DILIMITER   = r'[`\-=~!@#$%^&*()_+\[\]{};\'\\:"|<,./<>?\s]\s*'
@@ -122,7 +133,7 @@ def preprocess_sample(qid, condition, output):
     output    = [x.lower() for x in output]
 
     for index, id in enumerate(qid):
-        standard_qid = 'QID{}'.format(index)
+        standard_qid = '[QID{}]'.format(index)
         
         qid[index] = standard_qid
 
@@ -137,7 +148,7 @@ def preprocess_sample(qid, condition, output):
     digit_num = 0
     for word in condition:
         if word.isdigit():
-            standard_digit = 'DIGIT{}'.format(digit_num)
+            standard_digit = '[DIGIT{}]'.format(digit_num)
             digit_num += 1
             for word_index in range(len(condition)):
                 if condition[word_index] == word:
@@ -147,6 +158,9 @@ def preprocess_sample(qid, condition, output):
                 if output[word_index] == word:
                     output[word_index] = standard_digit
 
+    condition   = ['[START]']  + condition + ['[END]']
+    output      = ['[START]']  + output    + ['[END]']
+
     return qid, condition, output
 
 def prepare_data(data_set):
@@ -154,23 +168,61 @@ def prepare_data(data_set):
     CONDITIONs = data_set["CONDITION"].values
     OUTPUTs = data_set["OUTPUT"].values
 
-    QIDs_process = []
-    CONDITIONs_process = []
-    OUTPUTs_process = []
+    QIDs_processed = []
+    CONDITIONs_processed = []
+    OUTPUTs_processed = []
     for qid, condition, output in zip(QIDs, CONDITIONs, OUTPUTs):
         q, c, o = preprocess_sample(qid, condition, output)
-        QIDs_process.append(q)
-        CONDITIONs_process.append(c)
-        OUTPUTs_process.append(o)
+        QIDs_processed.append(q)
+        CONDITIONs_processed.append(c)
+        OUTPUTs_processed.append(o)
     
+    return CONDITIONs_processed, OUTPUTs_processed
+
+    """
     print(QIDs_process[:2],"\n")
     print(CONDITIONs_process[:2],"\n")
     print(CONDITIONs[:2],"\n")
     print(OUTPUTs_process[:2])
+    
     all_word = [word for i in range(len(CONDITIONs_process)) for word in CONDITIONs_process[i]]
     plot_word_cloud(all_word)
     all_word = [word for i in range(len(OUTPUTs_process)) for word in OUTPUTs_process[i]]
     plot_word_cloud(all_word)
+    """
+
+def create_model(vocab_size, embedding_dim=40):
+    """ Creates longuage model using keras
+    Args:
+        vocabulary vocab_size
+        embedding dimmestion
+    Returns:
+        model
+    """
+    model = Sequential([
+        Embedding(input_dim=vocab_size, output_dim=embedding_dim, mask_zero=True),
+        LSTM(70, dropout=0.00, return_sequences=False),
+        Dense(vocab_size),
+        Activation('softmax'),
+    ])
+    return model
+
+def train_model(model, X_train, X_valid, y_train, y_valid, epochs=100):
+    """ Trains the keras model
+    Args:
+        model: sequential model
+        X: train dataset
+        y: train labels
+    Return:
+        model: trained model
+    """
+    #callbacks = [EarlyStopping(monitor='val_acc', patience=5)]
+    callbacks = [ModelCheckpoint('model.chkpt', save_best_only=True, save_weights_only=False)]
+    model.compile(loss='sparse_categorical_crossentropy',
+                  optimizer='Nadam',
+                  metrics=['accuracy'])
+    model.fit(X_train, y_train, epochs=epochs, callbacks=callbacks, verbose=2, validation_data=(X_valid,y_valid))
+    return model
 
 
 
@@ -183,9 +235,29 @@ def main():
     train_data_path = args["path"]
 
     data_set = read_data(train_data_path)
-    prepare_data(data_set)
-   # X, y = prepare_data(data_set)
-    #X_train, X_valid, y_train, y_valid = train_test_split(X_train, y_train, test_size=.2, random_state=42)
+
+    CONDITIONs, OUTPUTs = prepare_data(data_set)
+    
+    vocab_size = 1000
+
+    HL_word2id, HL_id2word = create_vocabulary(cleaned_data, vocab_size)
+    ML_word2id, ML_id2word = create_vocabulary(cleaned_data, vocab_size)
+    
+    CONDITIONs_train, CONDITIONs_valid, OUTPUTs_train, OUTPUTs_valid = train_test_split(CONDITIONs, OUTPUTs, test_size=.2, random_state=42)
+
+    model = create_model(vocab_size)
+    model.summary()
+
+    num_epochs = 3
+    model = train_model(model, CONDITIONs_train, CONDITIONs_valid, OUTPUTs_train, OUTPUTs_valid, num_epochs)
+
+    model_path = 'model.h5'
+    model.save(model_path)
+    meta_data_path = 'metadata.pickle'
+
+    with open(meta_data_path,'wb') as f:
+        pickle.dump([word2id, id2word], f)
+
 
 
 
