@@ -12,10 +12,11 @@ import re
 import numpy as np
 import argparse
 import tensorflow as tf
+
 from tensorflow.python import keras
 
 import pickle
-
+from collections import Counter
 
 from matplotlib import pyplot as plt
 
@@ -23,11 +24,15 @@ from wordcloud import WordCloud, STOPWORDS
 
 from sklearn.model_selection import train_test_split
 
+
 from keras.preprocessing.sequence import pad_sequences
-from keras.models import Sequential, load_model
-from keras.layers import Embedding, LSTM, Dense, Activation, Dropout
+from keras.models import Sequential, load_model, Model, Input
+from keras.layers import Embedding, LSTM, Dense, Activation, Dropout, TimeDistributed
 from keras.callbacks import EarlyStopping, ModelCheckpoint
-from keras import backend as k
+from keras import backend as K
+from keras import metrics
+
+
 
 SPLIT_PATTERN_WITH_DILIMITER = r'([`\-=~!@#$%^&*()_+\[\]{};\'\\:"|<,./<>?\s])\s*'
 SPLIT_PATTERN_NO_DILIMITER   = r'[`\-=~!@#$%^&*()_+\[\]{};\'\\:"|<,./<>?\s]\s*'
@@ -64,56 +69,7 @@ def plot_length_distribution(list, max_length=100, cdf=False):
         length_freq = np.cumsum(length_freq)
     plt.plot(length_freq)
     plt.show()
-"""
-data_set = pd.read_excel("assignment/MT_training_corpus.xlsx")
 
-#print(data_set["CONDITION"].values)
-
-QIDs = data_set["QID"].values
-
-CONDITIONs = data_set["CONDITION"].values
-
-OUTPUTs = data_set["OUTPUT"].values
-cond = [condition.split(" ") for condition in CONDITIONs]
-print(cond[1:10][:])
-plot_length_distribution(cond, cdf=False)
-
-print(len(QIDs), " ", len(CONDITIONs), " ", len(OUTPUTs) )
-
-all_cond = " ".join(CONDITIONs)
-#all_cond = all_cond.split(" ")
-
-
-
-all_cond = re.split(r'([`\-=~!@#$%^&*()_+\[\]{};\'\\:"|<,./<>?\s])\s*', all_cond)
-
-plot_word_cloud(all_cond)
-
-
-all_out = [str(out) for out in OUTPUTs]
-all_out = " ".join(all_out)
-
-all_out = re.split(r'([`\-=~!@#$%^&*()_+\[\]{};\'\\:"|<,./<>?\s])\s*', all_out)
-
-#print(all_out)
-
-
-
-
-dictionary = {}
-
-for word in all_cond:
-    dictionary[word] = dictionary.get(word, 0) + 1
-
-dictionary = dict(sorted(dictionary.items(), key=lambda x: x[1], reverse=True))
-
-for word in dictionary:
-    if (dictionary[word]>0):
-        print(word, ": ", dictionary[word])
-
-
-
-"""
 
 
 def read_data(data_path):
@@ -191,7 +147,7 @@ def prepare_data(data_set):
     plot_word_cloud(all_word)
     """
 
-def create_model(vocab_size, embedding_dim=40):
+def create_model(num_encoder_tokens, num_decoder_tokens, embedding_dim=40):
     """ Creates longuage model using keras
     Args:
         vocabulary vocab_size
@@ -199,13 +155,42 @@ def create_model(vocab_size, embedding_dim=40):
     Returns:
         model
     """
-    model = Sequential([
-        Embedding(input_dim=vocab_size, output_dim=embedding_dim, mask_zero=True),
-        LSTM(70, dropout=0.00, return_sequences=False),
-        Dense(vocab_size),
-        Activation('softmax'),
-    ])
+
+    # Encoder
+    encoder_inputs = Input(shape=(None,))
+    
+    encoder_embedding_layer = Embedding(num_encoder_tokens, embedding_dim, mask_zero = True)
+    encoder_lstm_layer = LSTM(embedding_dim, return_state=True)
+    
+    encoder_embedding  = encoder_embedding_layer(encoder_inputs)
+    encoder_outputs, encoder_state_h, encoder_state_c = encoder_lstm_layer(encoder_embedding)
+
+    # We keep encoder states and discard encoder ouput.
+    encoder_states = [encoder_state_h, encoder_state_c]
+
+    # Decoder
+    # We set up the decoder initial sate using encoder states.
+    decoder_inputs = Input(shape=(None,))
+    decoder_embedding_layer = Embedding(num_decoder_tokens, embedding_dim, mask_zero = True)
+    decoder_embedding = decoder_embedding_layer(decoder_inputs)
+
+
+    decoder_lstm_layer = LSTM(embedding_dim, return_sequences=True, return_state=True)
+    decoder_outputs, decoder_state_h, decoder_state_c = decoder_lstm_layer(decoder_embedding, initial_state=encoder_states)
+
+    # Decoder internal states will be used only for prediction
+    decoder_states = [decoder_state_h, decoder_state_c]
+
+    # Use  a softmax layer to generate a probability distribution over the target vocabulary
+    decoder_dense_layer = Dense(num_decoder_tokens, activation='softmax')
+    decoder_outputs = decoder_dense_layer(decoder_outputs)
+    
+    # Define the model
+    model = Model([encoder_inputs, decoder_inputs], decoder_outputs)
     return model
+
+def Accuracy_3d(y, y_pred):
+    return keras.metrics.accuracy (y, y_pred)
 
 def train_model(model, X_train, X_valid, y_train, y_valid, epochs=100):
     """ Trains the keras model
@@ -216,15 +201,100 @@ def train_model(model, X_train, X_valid, y_train, y_valid, epochs=100):
     Return:
         model: trained model
     """
-    #callbacks = [EarlyStopping(monitor='val_acc', patience=5)]
+    # Compile the model
     callbacks = [ModelCheckpoint('model.chkpt', save_best_only=True, save_weights_only=False)]
     model.compile(loss='sparse_categorical_crossentropy',
                   optimizer='Nadam',
-                  metrics=['accuracy'])
-    model.fit(X_train, y_train, epochs=epochs, callbacks=callbacks, verbose=2, validation_data=(X_valid,y_valid))
+                  #metrics=['acc']
+                  metrics=[keras.metrics.sparse_categorical_accuracy]
+                  )
+    
+    batch_size = 20
+    
+    train_data_generator = data_generator(X_train, y_train, batch_size)
+    valid_data_generator = data_generator(X_valid, y_valid, batch_size)
+    
+    model.fit_generator(train_data_generator,
+                        validation_data=valid_data_generator,
+                        epochs=epochs,
+                        callbacks=callbacks,
+                        verbose=2,
+                        steps_per_epoch=len(X_train)/batch_size,
+                        validation_steps=len(X_valid)/batch_size)
     return model
 
+def create_vocabulary(word_list, max_vocab_size = 2000):
+    """ Create Vocabulary dictionary
+    Args:
+        text(str): inout text
+        max_vocab_size: maximum number of words in the vocabulary
+    Returns:
+        word2id(dict): word to id mapping
+        id2word(dict): id to word mapping
+    """
+    words = [word for sample in word_list for word in sample]
+    freq = Counter(words)
+    word2id = {'<PAD>' : 0}
+    id2word = {0 : '<PAD>'}
 
+    for word, _ in freq.most_common():
+        id = len(word2id)
+        word2id[word] = id
+        id2word[id] = word
+        if id == max_vocab_size - 1 :
+            break
+
+    return word2id, id2word
+
+def replace_using_dict(list, dictionary):
+    translated_list = []
+    for line in list:
+        translated_line = [dictionary[word] for word in line]
+        translated_list.append(translated_line)
+    
+    return translated_list
+
+def pad_front_with_zero(list, max_length=20):
+    padded_list = pad_sequences(list, maxlen=max_length, truncating='pre')
+    #for line in list:
+     #   print(line)
+      #  padded_line = pad_sequences(line, maxlen=max_length, truncating='pre')
+       # padded_list.append(padded_line[:max_length])
+
+    return padded_list
+
+def data_generator(X, y, batch_size):
+    """ Creates a datagenrator to feed three images to train embedding model.
+     first image is the anchor, second image is related to the anchor and third image is
+     unrelated to the anchor image
+    Args:
+        X: input images
+        y: input image lables
+        relation_dict: a python dictionary containing relation information
+    Returns:
+         yields with numpy arrays contining thjree images
+    """
+    while True:  
+        for idx in range(0, len(X), batch_size):
+            encoder_input_batch = X[idx:idx+batch_size]
+            decoder_input_batch = y[idx:idx+batch_size][:,:-1]
+            decoder_output_batch = y[idx:idx+batch_size][:,1:]
+
+            encoder_input_batch = np.array(encoder_input_batch)
+            decoder_input_batch = np.array(decoder_input_batch)
+            decoder_output_batch = np.array(decoder_output_batch)
+
+            decoder_output_batch = np.expand_dims(decoder_output_batch, axis=2)
+
+            #print(encoder_input_batch.shape)
+
+            yield([encoder_input_batch, decoder_input_batch], decoder_output_batch)
+            """
+            for idx2 in range(len(y)):
+                decoder_input_batch = y[idx:idx+batch_size][:idx2]
+                decoder_output_batch = y[idx:idx+batch_size][idx2]
+                yield([encoder_input_batch, decoder_input_batch], decoder_output_batch)
+            """
 
 def main():
 
@@ -238,19 +308,29 @@ def main():
 
     CONDITIONs, OUTPUTs = prepare_data(data_set)
     
-    vocab_size = 1000
+    HL_vocab_size = 1000
+    ML_vocab_size = 1000
 
-    HL_word2id, HL_id2word = create_vocabulary(cleaned_data, vocab_size)
-    ML_word2id, ML_id2word = create_vocabulary(cleaned_data, vocab_size)
-    
-    CONDITIONs_train, CONDITIONs_valid, OUTPUTs_train, OUTPUTs_valid = train_test_split(CONDITIONs, OUTPUTs, test_size=.2, random_state=42)
+    HL_word2id, HL_id2word = create_vocabulary(CONDITIONs, HL_vocab_size)
+    ML_word2id, ML_id2word = create_vocabulary(OUTPUTs, ML_vocab_size)
 
-    model = create_model(vocab_size)
+    CONDITIONs_id = replace_using_dict(CONDITIONs, HL_word2id)
+    OUTPUTs_id = replace_using_dict(OUTPUTs, ML_word2id)
+
+    CONDITIONs_id = pad_front_with_zero(CONDITIONs_id, 20)
+    OUTPUTs_id = pad_front_with_zero(OUTPUTs_id, 10)
+
+    CONDITIONs_train, CONDITIONs_valid, OUTPUTs_train, OUTPUTs_valid = train_test_split(CONDITIONs_id, OUTPUTs_id, test_size=.2, random_state=42)
+
+    model = create_model(num_encoder_tokens=HL_vocab_size, num_decoder_tokens=ML_vocab_size)
     model.summary()
 
-    num_epochs = 3
+
+
+    num_epochs = 30
     model = train_model(model, CONDITIONs_train, CONDITIONs_valid, OUTPUTs_train, OUTPUTs_valid, num_epochs)
 
+"""
     model_path = 'model.h5'
     model.save(model_path)
     meta_data_path = 'metadata.pickle'
@@ -258,7 +338,7 @@ def main():
     with open(meta_data_path,'wb') as f:
         pickle.dump([word2id, id2word], f)
 
-
+"""
 
 
 
