@@ -27,15 +27,17 @@ from sklearn.model_selection import train_test_split
 
 from keras.preprocessing.sequence import pad_sequences
 from keras.models import Sequential, load_model, Model, Input
-from keras.layers import Embedding, LSTM, Dense, Activation, Dropout, TimeDistributed
+from keras.layers import Embedding, LSTM, Dense, Activation, Dropout, TimeDistributed, Flatten
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 from keras import backend as K
 from keras import metrics
 
+import random
 
 
-SPLIT_PATTERN_WITH_DILIMITER = r'([`\-=~!@#$%^&*()_+\[\]{};\'\\:"|<,./<>?\s])\s*'
-SPLIT_PATTERN_NO_DILIMITER   = r'[`\-=~!@#$%^&*()_+\[\]{};\'\\:"|<,./<>?\s]\s*'
+
+SPLIT_PATTERN_WITH_DILIMITER = r'([`\-=~!@#$%^&*()_+\[\]{};\'\\:"|<,./<>?\n\s])\s*'
+SPLIT_PATTERN_NO_DILIMITER   = r'[`\-=~!@#$%^&*()_+\[\]{};\'\\:"|<,./<>?\n\s]\s*'
 
 
 def plot_word_cloud(word_list):
@@ -89,7 +91,7 @@ def preprocess_sample(qid, condition, output):
     output    = [x.lower() for x in output]
 
     for index, id in enumerate(qid):
-        standard_qid = '[QID{}]'.format(index)
+        standard_qid = '<QID{}>'.format(index)
         
         qid[index] = standard_qid
 
@@ -104,7 +106,7 @@ def preprocess_sample(qid, condition, output):
     digit_num = 0
     for word in condition:
         if word.isdigit():
-            standard_digit = '[DIGIT{}]'.format(digit_num)
+            standard_digit = '<DGT{}>'.format(digit_num)
             digit_num += 1
             for word_index in range(len(condition)):
                 if condition[word_index] == word:
@@ -114,8 +116,8 @@ def preprocess_sample(qid, condition, output):
                 if output[word_index] == word:
                     output[word_index] = standard_digit
 
-    condition   = ['[START]']  + condition + ['[END]']
-    output      = ['[START]']  + output    + ['[END]']
+    condition   = ['<BOS>']  + condition[:encoder_seq_length-2] + ['<EOS>']
+    output      = ['<BOS>']  + output[:decoder_seq_length-2+1]  + ['<EOS>']
 
     return qid, condition, output
 
@@ -132,7 +134,7 @@ def prepare_data(data_set):
         QIDs_processed.append(q)
         CONDITIONs_processed.append(c)
         OUTPUTs_processed.append(o)
-    
+
     return CONDITIONs_processed, OUTPUTs_processed
 
     """
@@ -160,20 +162,27 @@ def create_vocabulary(word_list, max_vocab_size = 2000):
     freq = Counter(words)
     word2id = {'<PAD>' : 0}
     id2word = {0 : '<PAD>'}
+    word2id = {'<BOS>' : 1}
+    id2word = {1 : '<BOS>'}
+    word2id = {'<EOS>' : 2}
+    id2word = {2 : '<EOS>'}
+    word2id = {'<UNK>' : 3}
+    id2word = {3 : '<UNK>'}
 
     for word, _ in freq.most_common():
         id = len(word2id)
-        word2id[word] = id
-        id2word[id] = word
+        if word not in word2id:
+            word2id[word] = id
+            id2word[id] = word
         if id == max_vocab_size - 1 :
             break
 
     return word2id, id2word
 
-def replace_using_dict(list, dictionary):
+def replace_using_dict(list, dictionary, unknown):
     translated_list = []
     for line in list:
-        translated_line = [dictionary[word] for word in line]
+        translated_line = [dictionary[word] if word in dictionary else unknown for word in line]
         translated_list.append(translated_line)
     
     return translated_list
@@ -195,42 +204,30 @@ def data_generator(X, y, batch_size):
     Returns:
          yields with numpy arrays contining thjree images
     """
-    while True:  
-        for idx in range(0, len(X)-batch_size, batch_size):
-            encoder_input_batch = X[idx:idx+batch_size]
-            decoder_input_batch = y[idx:idx+batch_size][:,:-1]
-            decoder_output_batch = y[idx:idx+batch_size][:,1:]
-            #decoder_input_batch[:,0:8] = 0
+    max_length_src = encoder_seq_length
+    max_length_tar = decoder_seq_length
+    while True:
+        #for j in range(0, len(X)-batch_size, batch_size):
+        for j in range(random.randint(1,len(X)-batch_size)):
+            encoder_input_data  = np.zeros((batch_size, max_length_src),dtype='float32')
+            decoder_input_data  = np.zeros((batch_size, max_length_tar),dtype='float32')
+            decoder_target_data = np.zeros((batch_size, max_length_tar, num_decoder_tokens),dtype='float32')
 
-            #print(decoder_input_batch[0],'\n')
-            #print(decoder_input_batch[0],'\n')
-            #print(decoder_output_batch[0],'\n')
-            
-            encoder_input_batch = np.array(encoder_input_batch,dtype='float32')
-            decoder_input_batch = np.array(decoder_input_batch,dtype='float32')
-            decoder_output_batch = np.array(decoder_output_batch,dtype='float32').reshape(batch_size,-1,1)
-            
-            #decoder_output_batch = np.expand_dims(decoder_output_batch, axis=2)
-
-            #print(encoder_input_batch.shape)
-
-            yield([encoder_input_batch, decoder_input_batch], decoder_output_batch)
-            
-            """
-            for idx2 in range(len(y)):
-                decoder_input_batch = y[idx:idx+batch_size][:,:idx2]
-                decoder_output_batch = y[idx:idx+batch_size][:,idx2]
-
-                encoder_input_batch = np.array(encoder_input_batch,dtype='float32').reshape((batch_size,20) )
-                decoder_input_batch = np.array(pad_front_with_zero([decoder_input_batch],9),dtype='float32').reshape((batch_size,-1) )
-                decoder_output_batch = np.array(decoder_output_batch,dtype='float32').reshape((batch_size,-1) )
-
-                print(encoder_input_batch,'\n')
-                print(decoder_input_batch,'\n')
-                print(decoder_output_batch,'\n')
-                yield([encoder_input_batch, decoder_input_batch], decoder_output_batch)
-            """
-
+            for i, (input_text, target_text) in enumerate(zip(X[j:j+batch_size], y[j:j+batch_size])):
+                for t, word in enumerate(input_text):
+                    encoder_input_data[i, t] = t # encoder input seq
+                for t, word in enumerate(target_text):
+                    if t < max_length_tar:
+                        decoder_input_data[i, t] = t #word # decoder input seq
+                    if t>0:
+                        # decoder target sequence (one hot encoded)
+                        # does not include the START_ token
+                        # Offset by one timestep
+                        decoder_target_data[i, t-1, t] = 1
+            #print(decoder_input_data[2,:],'\n')
+            #print(decoder_target_data[2,:,:],'\n')
+            yield([encoder_input_data, decoder_input_data], decoder_target_data)            
+ 
 
 
 def create_model(num_encoder_tokens, num_decoder_tokens, latent_dim=40):
@@ -245,10 +242,10 @@ def create_model(num_encoder_tokens, num_decoder_tokens, latent_dim=40):
     # Encoder
     encoder_inputs = Input(shape=(None,))
     
-    encoder_embedding_layer = Embedding(num_encoder_tokens, latent_dim, mask_zero = True)
-    encoder_lstm_layer = LSTM(latent_dim, return_state=True)
-    
+    encoder_embedding_layer = Embedding(num_encoder_tokens, latent_dim, mask_zero = True)   #, mask_zero = True
     encoder_embedding  = encoder_embedding_layer(encoder_inputs)
+    
+    encoder_lstm_layer = LSTM(latent_dim, return_state=True)
     encoder_outputs, encoder_state_h, encoder_state_c = encoder_lstm_layer(encoder_embedding)
 
     # We keep encoder states and discard encoder ouput.
@@ -257,27 +254,20 @@ def create_model(num_encoder_tokens, num_decoder_tokens, latent_dim=40):
     # Decoder
     # We set up the decoder initial sate using encoder states.
     decoder_inputs = Input(shape=(None,))
-    decoder_embedding_layer = Embedding(num_decoder_tokens, latent_dim, mask_zero = True)
+
+    decoder_embedding_layer = Embedding(num_decoder_tokens, latent_dim, mask_zero = True) #, mask_zero = True
     decoder_embedding = decoder_embedding_layer(decoder_inputs)
 
-
     decoder_lstm = LSTM(latent_dim, return_sequences=True, return_state=True)
-    decoder_outputs, decoder_state_h, decoder_state_c = decoder_lstm(decoder_embedding, initial_state=encoder_states)
+    decoder_outputs, _, _ = decoder_lstm(decoder_embedding, initial_state=encoder_states)
 
-    # Decoder internal states will be used only for prediction
-    decoder_states = [decoder_state_h, decoder_state_c]
+    decoder_dense = Dense(num_decoder_tokens, activation='softmax')
 
-    # Use  a softmax layer to generate a probability distribution over the target vocabulary
-    decoder_dense = TimeDistributed(
-                                    Dense(num_decoder_tokens, activation='softmax'),
-                                    input_shape=(9, latent_dim))
-    #decoder_dense_layer = Dense(num_decoder_tokens, activation='softmax')
-
-    decoder_outputs = decoder_dense(decoder_outputs)
+    outputs = TimeDistributed(decoder_dense)(decoder_outputs)
     
     # Define the model
-    model = Model([encoder_inputs, decoder_inputs], decoder_outputs)
-
+    model = Model([encoder_inputs, decoder_inputs], outputs)
+    
 
     # Next: inference mode (sampling).
     # Here's the drill:
@@ -294,36 +284,32 @@ def create_model(num_encoder_tokens, num_decoder_tokens, latent_dim=40):
     decoder_state_input_c = Input(shape=(latent_dim,))
     decoder_states_inputs = [decoder_state_input_h, decoder_state_input_c]
     
-    decoder_outputs, state_h, state_c = decoder_lstm(decoder_inputs, initial_state=decoder_states_inputs)
-    decoder_states = [state_h, state_c]
-    decoder_outputs = decoder_dense(decoder_outputs)
+    # Get the embeddings of the decoder sequence
+    decoder_embedding2 = decoder_embedding_layer(decoder_inputs)
+
+    decoder_outputs2, state_h, state_c = decoder_lstm(decoder_embedding2, initial_state=decoder_states_inputs)
+    decoder_states2 = [state_h, state_c]
+    decoder_outputs2 = decoder_dense(decoder_outputs2)
     decoder_model = Model(
                           [decoder_inputs] + decoder_states_inputs,
-                          [decoder_outputs] + decoder_states)
+                          [decoder_outputs2] + decoder_states2)
 
 
-
+    
     return model, encoder_model, decoder_model
 
 
 def train_model(model, X_train, X_valid, y_train, y_valid, epochs=100):
-    """ Trains the keras model
-    Args:
-        model: sequential model
-        X: train dataset
-        y: train labels
-    Return:
-        model: trained model
-    """
     # Compile the model
     callbacks = [ModelCheckpoint('model.chkpt', save_best_only=True, save_weights_only=False)]
-    model.compile(loss='sparse_categorical_crossentropy',
-                  optimizer='Nadam',
-                  #metrics=['acc']
-                  #metrics=[keras.metrics.sparse_categorical_accuracy]
-                  )
     
-    batch_size = 20
+    model.compile(loss='categorical_crossentropy',
+                  optimizer='Nadam',
+                  metrics=['acc'])
+    
+    batch_size = 200
+    
+    
     
     train_data_generator = data_generator(X_train, y_train, batch_size)
     valid_data_generator = data_generator(X_valid, y_valid, batch_size)
@@ -335,11 +321,7 @@ def train_model(model, X_train, X_valid, y_train, y_valid, epochs=100):
                         verbose=2,
                         steps_per_epoch=len(X_train)/batch_size,
                         validation_steps=len(X_valid)/batch_size)
-    
 
-
-
-    
     return model
 
 def decode_sequence(input_seq, encoder_model, decoder_model, ML_word2id, ML_id2word):
@@ -347,42 +329,56 @@ def decode_sequence(input_seq, encoder_model, decoder_model, ML_word2id, ML_id2w
     states_value = encoder_model.predict(input_seq)
 
     # Generate empty target sequence of length 1.
-    target_seq = np.zeros((1, 1, ML_vocab_size))
+    target_seq = np.zeros((1, 1))
     # Populate the first character of target sequence with the start character.
-    target_seq[0, 0, ML_word2id['[START]']] = 1.
+    target_seq[0, 0] = ML_word2id['<BOS>'] 
 
     # Sampling loop for a batch of sequences
     # (to simplify, here we assume a batch of size 1).
     stop_condition = False
     decoded_sentence = ''
+    num_decoded = 0
+    k=[]
     while not stop_condition:
         output_tokens, h, c = decoder_model.predict([target_seq] + states_value)
 
         # Sample a token
         sampled_token_index = np.argmax(output_tokens[0, -1, :])
-        sampled_char = ML_id2word[sampled_token_index]
-        decoded_sentence += sampled_char
+        if sampled_token_index in ML_id2word:
+            sampled_char = ML_id2word[sampled_token_index]
+        else:
+            sampled_char = '-'
 
+        k.append(sampled_token_index)
+        decoded_sentence += sampled_char
+        num_decoded += 1
         # Exit condition: either hit max length
         # or find stop character.
-        if (sampled_char == '[END]' or len(decoded_sentence) > max_decoder_seq_length):
+        if (sampled_char == '<EOS>' or num_decoded > 10):
             stop_condition = True
 
         # Update the target sequence (of length 1).
-        target_seq = np.zeros((1, 1, ML_vocab_size))
-        target_seq[0, 0, sampled_token_index] = 1.
+        target_seq = np.zeros((1, 1))
+        target_seq[0, 0] = sampled_token_index
 
         # Update states
         states_value = [h, c]
-
+    print(k)
     return decoded_sentence
 
 
 
 HL_vocab_size = 1000
-ML_vocab_size = 1000
-max_decoder_seq_length = 10
-num_epochs = 10
+ML_vocab_size = 100
+
+encoder_seq_length = 20
+decoder_seq_length = 10
+
+num_epochs = 30
+
+num_encoder_tokens = HL_vocab_size
+num_decoder_tokens = ML_vocab_size
+
 
 def main():
 
@@ -399,23 +395,29 @@ def main():
     HL_word2id, HL_id2word = create_vocabulary(CONDITIONs, HL_vocab_size)
     ML_word2id, ML_id2word = create_vocabulary(OUTPUTs, ML_vocab_size)
 
-    CONDITIONs_id = replace_using_dict(CONDITIONs, HL_word2id)
-    OUTPUTs_id = replace_using_dict(OUTPUTs, ML_word2id)
+    CONDITIONs = replace_using_dict(CONDITIONs, HL_word2id, HL_word2id["<UNK>"])
+    OUTPUTs    = replace_using_dict(OUTPUTs, ML_word2id, ML_word2id["<UNK>"])
 
-    CONDITIONs_id = pad_front_with_zero(CONDITIONs_id, 20)
-    OUTPUTs_id = pad_front_with_zero(OUTPUTs_id, 10)
+    CONDITIONs = pad_front_with_zero(CONDITIONs, encoder_seq_length)
+    OUTPUTs    = pad_front_with_zero(OUTPUTs, decoder_seq_length+1)
 
-    CONDITIONs_train, CONDITIONs_valid, OUTPUTs_train, OUTPUTs_valid = train_test_split(CONDITIONs_id, OUTPUTs_id, test_size=.2, random_state=42)
+    CONDITIONs_train, CONDITIONs_valid, OUTPUTs_train, OUTPUTs_valid = train_test_split(CONDITIONs, OUTPUTs, test_size=.1, random_state=42)
 
     model, encoder_model, decoder_model = create_model(num_encoder_tokens=HL_vocab_size, num_decoder_tokens=ML_vocab_size)
     model.summary()
  
     model = train_model(model, CONDITIONs_train, CONDITIONs_valid, OUTPUTs_train, OUTPUTs_valid, num_epochs)
     
-    input_seq = [ HL_word2id[word] for word in CONDITIONs_id[0]]
-    
-    decode_sequence(input_seq, encoder_model, decoder_model, ML_word2id, ML_id2word)
-    
+    for i in range(100):
+
+        #print("input:", [HL_id2word[word] for word in CONDITIONs_train[i] if word !=0 ],'\n')
+
+        print("input:", ''.join([ML_id2word[word] for word in OUTPUTs_train[i] if word !=0 ]),'\n')
+
+        input_seq = CONDITIONs_train[i]
+        
+        decoded_sentence = decode_sequence(input_seq, encoder_model, decoder_model, ML_word2id, ML_id2word)
+        print("predicted:", ''.join(decoded_sentence),'\n')
 
 
 """
