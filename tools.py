@@ -7,6 +7,7 @@ for the model
 
 import pandas as pd
 import re
+import os
 import numpy as np
 import pickle
 from collections import Counter
@@ -21,29 +22,37 @@ SPLIT_PATTERN_NO_DILIMITER   = r'[`\-=~!@#$%^&*()_+\[\]{};\'\\:"|<,./<>?\n\s]\s*
 
 def read_data(data_path):
     """
-    Reads an excel file and return and pandas data frame contaning the data
+    Reads data from an excel file
     """
     data_set = pd.read_excel(data_path)
-    return data_set
+    qids_raw       = data_set["QID"].values
+    conditions_raw = data_set["CONDITION"].values
+    outputs_raw    = data_set["OUTPUT"].values
+    return qids_raw, conditions_raw, outputs_raw
 
-def prepare_data(data_set):
+def write_data(qids, conditions, outputs, data_path):
+    """
+    Writes data to excel file
+    """
+    data_set = pd.DataFrame(list(zip(qids, conditions, outputs)),
+                            columns=["QID", "CONDITION", "OUTPUT"])
+    data_set.to_excel(data_path)
 
-    qids       = data_set["QID"].values
-    conditions = data_set["CONDITION"].values
-    outputs    = data_set["OUTPUT"].values
 
-    qids_processed = []
-    conditions_processed = []
-    outputs_processed = []
+def prepare_data(qids_raw, conditions_raw, outputs_raw):
+
+    qids = []
+    conditions = []
+    outputs = []
     dictionaries_lemanization = []
-    for qid, condition, output in zip(qids, conditions, outputs):
-        qid_p, condition_p, output_p, dictionary = preprocess_sample(qid, condition, output)
-        qids_processed.append(qid_p)
-        conditions_processed.append(condition_p)
-        outputs_processed.append(output_p)
+    for qid_raw, condition_raw, output_raw in zip(qids_raw, conditions_raw, outputs_raw):
+        qid, condition, output, dictionary = preprocess_sample(qid_raw, condition_raw, output_raw)
+        qids.append(qid)
+        conditions.append(condition)
+        outputs.append(output)
         dictionaries_lemanization.append(dictionary)
 
-    return conditions_processed, outputs_processed, dictionaries_lemanization
+    return qids, conditions, outputs, dictionaries_lemanization
 
 def preprocess_sample(qid_raw, condition_raw, output_raw):
     
@@ -136,10 +145,13 @@ def create_vocabulary(word_list, max_vocab_size):
     return word2id, id2word
 
 
-def replace_using_dict(list, dictionary):
+def replace_using_dict(list, dictionary, drop_unknown=False):
     translated_list = []
     for line in list:
-        translated_line = [dictionary[word] for word in line if word in dictionary]
+        if drop_unknown:
+            translated_line = [dictionary[word] for word in line if word in dictionary]
+        else:
+            translated_line = [dictionary[word] if word in dictionary else word for word in line]
         translated_list.append(translated_line)
     
     return translated_list
