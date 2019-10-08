@@ -1,0 +1,1737 @@
+
+% Default to the notebook output style
+
+    
+
+
+% Inherit from the specified cell style.
+
+
+
+
+    
+\documentclass[11pt]{article}
+
+    
+    
+    \usepackage[T1]{fontenc}
+    % Nicer default font (+ math font) than Computer Modern for most use cases
+    \usepackage{mathpazo}
+
+    % Basic figure setup, for now with no caption control since it's done
+    % automatically by Pandoc (which extracts ![](path) syntax from Markdown).
+    \usepackage{graphicx}
+    % We will generate all images so they have a width \maxwidth. This means
+    % that they will get their normal width if they fit onto the page, but
+    % are scaled down if they would overflow the margins.
+    \makeatletter
+    \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth
+    \else\Gin@nat@width\fi}
+    \makeatother
+    \let\Oldincludegraphics\includegraphics
+    % Set max figure width to be 80% of text width, for now hardcoded.
+    \renewcommand{\includegraphics}[1]{\Oldincludegraphics[width=.8\maxwidth]{#1}}
+    % Ensure that by default, figures have no caption (until we provide a
+    % proper Figure object with a Caption API and a way to capture that
+    % in the conversion process - todo).
+    \usepackage{caption}
+    \DeclareCaptionLabelFormat{nolabel}{}
+    \captionsetup{labelformat=nolabel}
+
+    \usepackage{adjustbox} % Used to constrain images to a maximum size 
+    \usepackage{xcolor} % Allow colors to be defined
+    \usepackage{enumerate} % Needed for markdown enumerations to work
+    \usepackage{geometry} % Used to adjust the document margins
+    \usepackage{amsmath} % Equations
+    \usepackage{amssymb} % Equations
+    \usepackage{textcomp} % defines textquotesingle
+    % Hack from http://tex.stackexchange.com/a/47451/13684:
+    \AtBeginDocument{%
+        \def\PYZsq{\textquotesingle}% Upright quotes in Pygmentized code
+    }
+    \usepackage{upquote} % Upright quotes for verbatim code
+    \usepackage{eurosym} % defines \euro
+    \usepackage[mathletters]{ucs} % Extended unicode (utf-8) support
+    \usepackage[utf8x]{inputenc} % Allow utf-8 characters in the tex document
+    \usepackage{fancyvrb} % verbatim replacement that allows latex
+    \usepackage{grffile} % extends the file name processing of package graphics 
+                         % to support a larger range 
+    % The hyperref package gives us a pdf with properly built
+    % internal navigation ('pdf bookmarks' for the table of contents,
+    % internal cross-reference links, web links for URLs, etc.)
+    \usepackage{hyperref}
+    \usepackage{longtable} % longtable support required by pandoc >1.10
+    \usepackage{booktabs}  % table support for pandoc > 1.12.2
+    \usepackage[inline]{enumitem} % IRkernel/repr support (it uses the enumerate* environment)
+    \usepackage[normalem]{ulem} % ulem is needed to support strikethroughs (\sout)
+                                % normalem makes italics be italics, not underlines
+    
+
+    
+    
+    % Colors for the hyperref package
+    \definecolor{urlcolor}{rgb}{0,.145,.698}
+    \definecolor{linkcolor}{rgb}{.71,0.21,0.01}
+    \definecolor{citecolor}{rgb}{.12,.54,.11}
+
+    % ANSI colors
+    \definecolor{ansi-black}{HTML}{3E424D}
+    \definecolor{ansi-black-intense}{HTML}{282C36}
+    \definecolor{ansi-red}{HTML}{E75C58}
+    \definecolor{ansi-red-intense}{HTML}{B22B31}
+    \definecolor{ansi-green}{HTML}{00A250}
+    \definecolor{ansi-green-intense}{HTML}{007427}
+    \definecolor{ansi-yellow}{HTML}{DDB62B}
+    \definecolor{ansi-yellow-intense}{HTML}{B27D12}
+    \definecolor{ansi-blue}{HTML}{208FFB}
+    \definecolor{ansi-blue-intense}{HTML}{0065CA}
+    \definecolor{ansi-magenta}{HTML}{D160C4}
+    \definecolor{ansi-magenta-intense}{HTML}{A03196}
+    \definecolor{ansi-cyan}{HTML}{60C6C8}
+    \definecolor{ansi-cyan-intense}{HTML}{258F8F}
+    \definecolor{ansi-white}{HTML}{C5C1B4}
+    \definecolor{ansi-white-intense}{HTML}{A1A6B2}
+
+    % commands and environments needed by pandoc snippets
+    % extracted from the output of `pandoc -s`
+    \providecommand{\tightlist}{%
+      \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+    \DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+    % Add ',fontsize=\small' for more characters per line
+    \newenvironment{Shaded}{}{}
+    \newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{{#1}}}
+    \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{{#1}}}}
+    \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{{#1}}}
+    \newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{{#1}}}
+    \newcommand{\RegionMarkerTok}[1]{{#1}}
+    \newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\NormalTok}[1]{{#1}}
+    
+    % Additional commands for more recent versions of Pandoc
+    \newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{{#1}}}
+    \newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{{#1}}}
+    \newcommand{\ImportTok}[1]{{#1}}
+    \newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{{#1}}}}
+    \newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{{#1}}}
+    \newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{{#1}}}
+    \newcommand{\BuiltInTok}[1]{{#1}}
+    \newcommand{\ExtensionTok}[1]{{#1}}
+    \newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{{#1}}}
+    \newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{{#1}}}
+    \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    
+    
+    % Define a nice break command that doesn't care if a line doesn't already
+    % exist.
+    \def\br{\hspace*{\fill} \\* }
+    % Math Jax compatability definitions
+    \def\gt{>}
+    \def\lt{<}
+    % Document parameters
+    \title{Untitled}
+    
+    
+    
+
+    % Pygments definitions
+    
+\makeatletter
+\def\PY@reset{\let\PY@it=\relax \let\PY@bf=\relax%
+    \let\PY@ul=\relax \let\PY@tc=\relax%
+    \let\PY@bc=\relax \let\PY@ff=\relax}
+\def\PY@tok#1{\csname PY@tok@#1\endcsname}
+\def\PY@toks#1+{\ifx\relax#1\empty\else%
+    \PY@tok{#1}\expandafter\PY@toks\fi}
+\def\PY@do#1{\PY@bc{\PY@tc{\PY@ul{%
+    \PY@it{\PY@bf{\PY@ff{#1}}}}}}}
+\def\PY#1#2{\PY@reset\PY@toks#1+\relax+\PY@do{#2}}
+
+\expandafter\def\csname PY@tok@w\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
+\expandafter\def\csname PY@tok@c\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.74,0.48,0.00}{##1}}}
+\expandafter\def\csname PY@tok@k\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kt\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.69,0.00,0.25}{##1}}}
+\expandafter\def\csname PY@tok@o\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@ow\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\expandafter\def\csname PY@tok@nb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@nf\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@nc\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@nn\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@ne\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.82,0.25,0.23}{##1}}}
+\expandafter\def\csname PY@tok@nv\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@no\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.53,0.00,0.00}{##1}}}
+\expandafter\def\csname PY@tok@nl\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.63,0.63,0.00}{##1}}}
+\expandafter\def\csname PY@tok@ni\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.60,0.60,0.60}{##1}}}
+\expandafter\def\csname PY@tok@na\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.49,0.56,0.16}{##1}}}
+\expandafter\def\csname PY@tok@nt\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@nd\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\expandafter\def\csname PY@tok@s\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sd\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@si\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.53}{##1}}}
+\expandafter\def\csname PY@tok@se\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sr\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.53}{##1}}}
+\expandafter\def\csname PY@tok@ss\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@sx\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@m\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@gh\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\expandafter\def\csname PY@tok@gu\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
+\expandafter\def\csname PY@tok@gd\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
+\expandafter\def\csname PY@tok@gi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.63,0.00}{##1}}}
+\expandafter\def\csname PY@tok@gr\endcsname{\def\PY@tc##1{\textcolor[rgb]{1.00,0.00,0.00}{##1}}}
+\expandafter\def\csname PY@tok@ge\endcsname{\let\PY@it=\textit}
+\expandafter\def\csname PY@tok@gs\endcsname{\let\PY@bf=\textbf}
+\expandafter\def\csname PY@tok@gp\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\expandafter\def\csname PY@tok@go\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.53,0.53,0.53}{##1}}}
+\expandafter\def\csname PY@tok@gt\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
+\expandafter\def\csname PY@tok@err\endcsname{\def\PY@bc##1{\setlength{\fboxsep}{0pt}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}
+\expandafter\def\csname PY@tok@kc\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kd\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kn\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kr\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@bp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@fm\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@vc\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@vg\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@vi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@vm\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@sa\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sc\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@dl\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@s2\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sh\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@s1\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@mb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@mf\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@mh\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@mi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@il\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@mo\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@ch\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cm\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cpf\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@c1\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cs\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+
+\def\PYZbs{\char`\\}
+\def\PYZus{\char`\_}
+\def\PYZob{\char`\{}
+\def\PYZcb{\char`\}}
+\def\PYZca{\char`\^}
+\def\PYZam{\char`\&}
+\def\PYZlt{\char`\<}
+\def\PYZgt{\char`\>}
+\def\PYZsh{\char`\#}
+\def\PYZpc{\char`\%}
+\def\PYZdl{\char`\$}
+\def\PYZhy{\char`\-}
+\def\PYZsq{\char`\'}
+\def\PYZdq{\char`\"}
+\def\PYZti{\char`\~}
+% for compatibility with earlier versions
+\def\PYZat{@}
+\def\PYZlb{[}
+\def\PYZrb{]}
+\makeatother
+
+
+    % Exact colors from NB
+    \definecolor{incolor}{rgb}{0.0, 0.0, 0.5}
+    \definecolor{outcolor}{rgb}{0.545, 0.0, 0.0}
+
+
+
+    
+    % Prevent overflowing lines due to hard-to-break entities
+    \sloppy 
+    % Setup hyperref package
+    \hypersetup{
+      breaklinks=true,  % so long urls are correctly broken across lines
+      colorlinks=true,
+      urlcolor=urlcolor,
+      linkcolor=linkcolor,
+      citecolor=citecolor,
+      }
+    % Slightly bigger margins than the latex defaults
+    
+    \geometry{verbose,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+    
+    
+
+    \begin{document}
+    
+    
+    \maketitle
+    
+    
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}1}]:} \PY{l+s+sd}{\PYZdq{}\PYZdq{}\PYZdq{}}
+        \PY{l+s+sd}{This file provides some helper functions required to read and prepare data}
+        \PY{l+s+sd}{for the model}
+        \PY{l+s+sd}{\PYZdq{}\PYZdq{}\PYZdq{}}
+        
+        \PY{k+kn}{import} \PY{n+nn}{pandas} \PY{k}{as} \PY{n+nn}{pd}
+        \PY{k+kn}{import} \PY{n+nn}{re}
+        \PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}
+        \PY{k+kn}{from} \PY{n+nn}{collections} \PY{k}{import} \PY{n}{Counter}
+        \PY{k+kn}{from} \PY{n+nn}{tensorflow}\PY{n+nn}{.}\PY{n+nn}{keras}\PY{n+nn}{.}\PY{n+nn}{preprocessing}\PY{n+nn}{.}\PY{n+nn}{sequence} \PY{k}{import} \PY{n}{pad\PYZus{}sequences}
+        \PY{k+kn}{from} \PY{n+nn}{matplotlib} \PY{k}{import} \PY{n}{pyplot} \PY{k}{as} \PY{n}{plt}
+        \PY{k+kn}{from} \PY{n+nn}{wordcloud} \PY{k}{import} \PY{n}{WordCloud}\PY{p}{,} \PY{n}{STOPWORDS}
+        
+        
+        \PY{n}{SPLIT\PYZus{}PATTERN\PYZus{}WITH\PYZus{}DILIMITER} \PY{o}{=} \PY{l+s+sa}{r}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{([`}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{\PYZhy{}=\PYZti{}!@\PYZsh{}\PYZdl{}}\PY{l+s+s1}{\PYZpc{}}\PY{l+s+s1}{\PYZca{}\PYZam{}*()\PYZus{}+}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{[}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{]}\PY{l+s+si}{\PYZob{}\PYZcb{}}\PY{l+s+s1}{;}\PY{l+s+se}{\PYZbs{}\PYZsq{}}\PY{l+s+se}{\PYZbs{}\PYZbs{}}\PY{l+s+s1}{:}\PY{l+s+s1}{\PYZdq{}}\PY{l+s+s1}{|\PYZlt{},./\PYZlt{}\PYZgt{}?}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{n}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{s])}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{s*}\PY{l+s+s1}{\PYZsq{}}
+        \PY{n}{SPLIT\PYZus{}PATTERN\PYZus{}NO\PYZus{}DILIMITER}   \PY{o}{=} \PY{l+s+sa}{r}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{[`}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{\PYZhy{}=\PYZti{}!@\PYZsh{}\PYZdl{}}\PY{l+s+s1}{\PYZpc{}}\PY{l+s+s1}{\PYZca{}\PYZam{}*()\PYZus{}+}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{[}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{]}\PY{l+s+si}{\PYZob{}\PYZcb{}}\PY{l+s+s1}{;}\PY{l+s+se}{\PYZbs{}\PYZsq{}}\PY{l+s+se}{\PYZbs{}\PYZbs{}}\PY{l+s+s1}{:}\PY{l+s+s1}{\PYZdq{}}\PY{l+s+s1}{|\PYZlt{},./\PYZlt{}\PYZgt{}?}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{n}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{s]}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{s*}\PY{l+s+s1}{\PYZsq{}}
+        
+        
+        \PY{k}{def} \PY{n+nf}{read\PYZus{}data}\PY{p}{(}\PY{n}{data\PYZus{}path}\PY{p}{)}\PY{p}{:}
+            \PY{l+s+sd}{\PYZdq{}\PYZdq{}\PYZdq{}}
+        \PY{l+s+sd}{    Reads data from an excel file}
+        \PY{l+s+sd}{    \PYZdq{}\PYZdq{}\PYZdq{}}
+            \PY{n}{data\PYZus{}set} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{read\PYZus{}excel}\PY{p}{(}\PY{n}{data\PYZus{}path}\PY{p}{)}
+            \PY{n}{qids\PYZus{}raw}       \PY{o}{=} \PY{n}{data\PYZus{}set}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{QID}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{o}{.}\PY{n}{values}
+            \PY{n}{conditions\PYZus{}raw} \PY{o}{=} \PY{n}{data\PYZus{}set}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{CONDITION}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{o}{.}\PY{n}{values}
+            \PY{n}{outputs\PYZus{}raw}    \PY{o}{=} \PY{n}{data\PYZus{}set}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{OUTPUT}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{o}{.}\PY{n}{values}
+            \PY{k}{return} \PY{n}{qids\PYZus{}raw}\PY{p}{,} \PY{n}{conditions\PYZus{}raw}\PY{p}{,} \PY{n}{outputs\PYZus{}raw}
+        
+        \PY{k}{def} \PY{n+nf}{write\PYZus{}data}\PY{p}{(}\PY{n}{qids}\PY{p}{,} \PY{n}{conditions}\PY{p}{,} \PY{n}{outputs}\PY{p}{,} \PY{n}{data\PYZus{}path}\PY{p}{)}\PY{p}{:}
+            \PY{l+s+sd}{\PYZdq{}\PYZdq{}\PYZdq{}}
+        \PY{l+s+sd}{    Writes data to excel file}
+        \PY{l+s+sd}{    \PYZdq{}\PYZdq{}\PYZdq{}}
+            \PY{n}{data\PYZus{}set} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n+nb}{list}\PY{p}{(}\PY{n+nb}{zip}\PY{p}{(}\PY{n}{qids}\PY{p}{,} \PY{n}{conditions}\PY{p}{,} \PY{n}{outputs}\PY{p}{)}\PY{p}{)}\PY{p}{,}
+                                    \PY{n}{columns}\PY{o}{=}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{QID}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{CONDITION}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{OUTPUT}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{)}
+            \PY{n}{data\PYZus{}set}\PY{o}{.}\PY{n}{to\PYZus{}excel}\PY{p}{(}\PY{n}{data\PYZus{}path}\PY{p}{)}
+        
+        
+        \PY{k}{def} \PY{n+nf}{prepare\PYZus{}data}\PY{p}{(}\PY{n}{qids\PYZus{}raw}\PY{p}{,} \PY{n}{conditions\PYZus{}raw}\PY{p}{,} \PY{n}{outputs\PYZus{}raw}\PY{p}{)}\PY{p}{:}
+            \PY{l+s+sd}{\PYZdq{}\PYZdq{}\PYZdq{}}
+        \PY{l+s+sd}{    Prepares data for the model by}
+        \PY{l+s+sd}{    Args:}
+        \PY{l+s+sd}{        qids\PYZus{}raw: Pyhon list of raw qid texts}
+        \PY{l+s+sd}{        conditions\PYZus{}raw: Pyhon list of raw condition texts}
+        \PY{l+s+sd}{        outputs\PYZus{}raw: Pyhon list of raw output texts}
+        \PY{l+s+sd}{    Returns:}
+        \PY{l+s+sd}{        qids: Pyhon list of preprocessed qid sequnces}
+        \PY{l+s+sd}{        conditions: Pyhon list of preprocessed condition sequnces}
+        \PY{l+s+sd}{        outputs: Pyhon list of preprocessed output sequnces}
+        \PY{l+s+sd}{        dictionaries\PYZus{}standardization: Pyhton list of dictionaries used for standardizing samples}
+        \PY{l+s+sd}{    \PYZdq{}\PYZdq{}\PYZdq{}}
+        
+            \PY{n}{qids} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+            \PY{n}{conditions} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+            \PY{n}{outputs} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+            \PY{n}{dictionaries\PYZus{}lemanization} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+            \PY{k}{for} \PY{n}{qid\PYZus{}raw}\PY{p}{,} \PY{n}{condition\PYZus{}raw}\PY{p}{,} \PY{n}{output\PYZus{}raw} \PY{o+ow}{in} \PY{n+nb}{zip}\PY{p}{(}\PY{n}{qids\PYZus{}raw}\PY{p}{,} \PY{n}{conditions\PYZus{}raw}\PY{p}{,} \PY{n}{outputs\PYZus{}raw}\PY{p}{)}\PY{p}{:}
+                \PY{n}{qid}\PY{p}{,} \PY{n}{condition}\PY{p}{,} \PY{n}{output}\PY{p}{,} \PY{n}{dictionary} \PY{o}{=} \PY{n}{preprocess\PYZus{}sample}\PY{p}{(}\PY{n}{qid\PYZus{}raw}\PY{p}{,} \PY{n}{condition\PYZus{}raw}\PY{p}{,} \PY{n}{output\PYZus{}raw}\PY{p}{)}
+                \PY{n}{qids}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{qid}\PY{p}{)}
+                \PY{n}{conditions}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{condition}\PY{p}{)}
+                \PY{n}{outputs}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{output}\PY{p}{)}
+                \PY{n}{dictionaries\PYZus{}lemanization}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{dictionary}\PY{p}{)}
+        
+            \PY{k}{return} \PY{n}{qids}\PY{p}{,} \PY{n}{conditions}\PY{p}{,} \PY{n}{outputs}\PY{p}{,} \PY{n}{dictionaries\PYZus{}standardization}
+        
+        \PY{k}{def} \PY{n+nf}{preprocess\PYZus{}sample}\PY{p}{(}\PY{n}{qid\PYZus{}raw}\PY{p}{,} \PY{n}{condition\PYZus{}raw}\PY{p}{,} \PY{n}{output\PYZus{}raw}\PY{p}{)}\PY{p}{:}
+            \PY{n}{qid}\PY{p}{,} \PY{n}{condition}\PY{p}{,} \PY{n}{output} \PY{o}{=} \PY{n}{split\PYZus{}to\PYZus{}words}\PY{p}{(}\PY{n}{qid\PYZus{}raw}\PY{p}{,} \PY{n}{condition\PYZus{}raw}\PY{p}{,} \PY{n}{output\PYZus{}raw}\PY{p}{)}
+            
+            \PY{n}{qid}\PY{p}{,} \PY{n}{condition}\PY{p}{,} \PY{n}{output}\PY{p}{,} \PY{n}{dictionary\PYZus{}standardization} \PY{o}{=} \PY{n}{standardize\PYZus{}words}\PY{p}{(}\PY{n}{qid}\PY{p}{,} \PY{n}{condition}\PY{p}{,} \PY{n}{output}\PY{p}{)}
+            \PY{k}{return} \PY{n}{qid}\PY{p}{,} \PY{n}{condition}\PY{p}{,} \PY{n}{output}\PY{p}{,} \PY{n}{dictionary\PYZus{}standardization}
+        
+        \PY{k}{def} \PY{n+nf}{split\PYZus{}to\PYZus{}words}\PY{p}{(}\PY{n}{qid\PYZus{}raw}\PY{p}{,} \PY{n}{condition\PYZus{}raw}\PY{p}{,} \PY{n}{output\PYZus{}raw}\PY{p}{)}\PY{p}{:}
+            \PY{n}{qid}       \PY{o}{=} \PY{n}{re}\PY{o}{.}\PY{n}{split}\PY{p}{(}\PY{n}{SPLIT\PYZus{}PATTERN\PYZus{}NO\PYZus{}DILIMITER}\PY{p}{,} \PY{n+nb}{str}\PY{p}{(}\PY{n}{qid\PYZus{}raw}\PY{p}{)}\PY{p}{)}
+            \PY{n}{condition} \PY{o}{=} \PY{n}{re}\PY{o}{.}\PY{n}{split}\PY{p}{(}\PY{n}{SPLIT\PYZus{}PATTERN\PYZus{}NO\PYZus{}DILIMITER}\PY{p}{,} \PY{n+nb}{str}\PY{p}{(}\PY{n}{condition\PYZus{}raw}\PY{p}{)}\PY{p}{)}
+            \PY{n}{condition} \PY{o}{=} \PY{p}{[}\PY{n}{cond} \PY{k}{for} \PY{n}{cond} \PY{o+ow}{in} \PY{n}{condition} \PY{k}{if} \PY{n}{cond} \PY{o}{!=} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ }\PY{l+s+s2}{\PYZdq{}} \PY{o+ow}{and} \PY{n}{cond} \PY{o}{!=} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}
+            \PY{n}{output}    \PY{o}{=} \PY{n}{re}\PY{o}{.}\PY{n}{split}\PY{p}{(}\PY{n}{SPLIT\PYZus{}PATTERN\PYZus{}WITH\PYZus{}DILIMITER}\PY{p}{,} \PY{n+nb}{str}\PY{p}{(}\PY{n}{output\PYZus{}raw}\PY{p}{)}\PY{p}{)}
+            
+            \PY{n}{qid}       \PY{o}{=} \PY{p}{[}\PY{n}{x}\PY{o}{.}\PY{n}{lower}\PY{p}{(}\PY{p}{)} \PY{k}{for} \PY{n}{x} \PY{o+ow}{in} \PY{n}{qid}\PY{p}{]}
+            \PY{n}{condition} \PY{o}{=} \PY{p}{[}\PY{n}{x}\PY{o}{.}\PY{n}{lower}\PY{p}{(}\PY{p}{)} \PY{k}{for} \PY{n}{x} \PY{o+ow}{in} \PY{n}{condition}\PY{p}{]}
+            \PY{n}{output}    \PY{o}{=} \PY{p}{[}\PY{n}{x}\PY{o}{.}\PY{n}{lower}\PY{p}{(}\PY{p}{)} \PY{k}{for} \PY{n}{x} \PY{o+ow}{in} \PY{n}{output}\PY{p}{]}
+            
+            \PY{k}{return} \PY{n}{qid}\PY{p}{,} \PY{n}{condition}\PY{p}{,} \PY{n}{output}
+        
+        \PY{k}{def} \PY{n+nf}{standardize\PYZus{}words}\PY{p}{(}\PY{n}{qid}\PY{p}{,} \PY{n}{condition}\PY{p}{,} \PY{n}{output}\PY{p}{)}\PY{p}{:}
+            \PY{n}{dictionary\PYZus{}standardization} \PY{o}{=} \PY{p}{\PYZob{}}\PY{p}{\PYZcb{}}
+            \PY{k}{for} \PY{n}{index}\PY{p}{,} \PY{n+nb}{id} \PY{o+ow}{in} \PY{n+nb}{enumerate}\PY{p}{(}\PY{n}{qid}\PY{p}{)}\PY{p}{:}
+                \PY{n}{standard\PYZus{}qid} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZlt{}QID}\PY{l+s+si}{\PYZob{}\PYZcb{}}\PY{l+s+s1}{\PYZgt{}}\PY{l+s+s1}{\PYZsq{}}\PY{o}{.}\PY{n}{format}\PY{p}{(}\PY{n}{index}\PY{p}{)}
+                \PY{n}{dictionary\PYZus{}standardization}\PY{p}{[}\PY{n}{standard\PYZus{}qid}\PY{p}{]} \PY{o}{=} \PY{n}{qid}\PY{p}{[}\PY{n}{index}\PY{p}{]}
+                \PY{n}{qid}\PY{p}{[}\PY{n}{index}\PY{p}{]} \PY{o}{=} \PY{n}{standard\PYZus{}qid}
+            
+                \PY{k}{for} \PY{n}{word\PYZus{}index} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{condition}\PY{p}{)}\PY{p}{)}\PY{p}{:}
+                    \PY{k}{if} \PY{n}{condition}\PY{p}{[}\PY{n}{word\PYZus{}index}\PY{p}{]} \PY{o}{==} \PY{n+nb}{id}\PY{p}{:}
+                        \PY{n}{condition}\PY{p}{[}\PY{n}{word\PYZus{}index}\PY{p}{]} \PY{o}{=} \PY{n}{standard\PYZus{}qid}
+        
+                \PY{k}{for} \PY{n}{word\PYZus{}index} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{output}\PY{p}{)}\PY{p}{)}\PY{p}{:}
+                    \PY{k}{if} \PY{n}{output}\PY{p}{[}\PY{n}{word\PYZus{}index}\PY{p}{]} \PY{o}{==} \PY{n+nb}{id}\PY{p}{:}
+                        \PY{n}{output}\PY{p}{[}\PY{n}{word\PYZus{}index}\PY{p}{]} \PY{o}{=} \PY{n}{standard\PYZus{}qid}
+        
+            \PY{n}{digit\PYZus{}num} \PY{o}{=} \PY{l+m+mi}{0}
+            \PY{k}{for} \PY{n}{word} \PY{o+ow}{in} \PY{n}{condition}\PY{p}{:}
+                \PY{k}{if} \PY{n}{word}\PY{o}{.}\PY{n}{isdigit}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+                    \PY{n}{standard\PYZus{}digit} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZlt{}DGT}\PY{l+s+si}{\PYZob{}\PYZcb{}}\PY{l+s+s1}{\PYZgt{}}\PY{l+s+s1}{\PYZsq{}}\PY{o}{.}\PY{n}{format}\PY{p}{(}\PY{n}{digit\PYZus{}num}\PY{p}{)}
+                    \PY{n}{digit\PYZus{}num} \PY{o}{+}\PY{o}{=} \PY{l+m+mi}{1}
+                    \PY{n}{dictionary\PYZus{}standardization}\PY{p}{[}\PY{n}{standard\PYZus{}digit}\PY{p}{]} \PY{o}{=} \PY{n}{word}
+        
+                    \PY{k}{for} \PY{n}{word\PYZus{}index} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{condition}\PY{p}{)}\PY{p}{)}\PY{p}{:}
+                        \PY{k}{if} \PY{n}{condition}\PY{p}{[}\PY{n}{word\PYZus{}index}\PY{p}{]} \PY{o}{==} \PY{n}{word}\PY{p}{:}
+                            \PY{n}{condition}\PY{p}{[}\PY{n}{word\PYZus{}index}\PY{p}{]} \PY{o}{=} \PY{n}{standard\PYZus{}digit}
+        
+                    \PY{k}{for} \PY{n}{word\PYZus{}index} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{output}\PY{p}{)}\PY{p}{)}\PY{p}{:}
+                        \PY{k}{if} \PY{n}{output}\PY{p}{[}\PY{n}{word\PYZus{}index}\PY{p}{]} \PY{o}{==} \PY{n}{word}\PY{p}{:}
+                            \PY{n}{output}\PY{p}{[}\PY{n}{word\PYZus{}index}\PY{p}{]} \PY{o}{=} \PY{n}{standard\PYZus{}digit}
+        
+            \PY{k}{for} \PY{n}{word} \PY{o+ow}{in} \PY{n}{output}\PY{p}{:}
+                \PY{k}{if} \PY{n}{word}\PY{o}{.}\PY{n}{isdigit}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+                    \PY{n}{standard\PYZus{}digit} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZlt{}DGT}\PY{l+s+si}{\PYZob{}\PYZcb{}}\PY{l+s+s1}{\PYZgt{}}\PY{l+s+s1}{\PYZsq{}}\PY{o}{.}\PY{n}{format}\PY{p}{(}\PY{n}{digit\PYZus{}num}\PY{p}{)}
+                    \PY{n}{digit\PYZus{}num} \PY{o}{+}\PY{o}{=} \PY{l+m+mi}{1}
+                    \PY{n}{dictionary\PYZus{}standardization}\PY{p}{[}\PY{n}{standard\PYZus{}digit}\PY{p}{]} \PY{o}{=} \PY{n}{word}
+                    \PY{k}{for} \PY{n}{word\PYZus{}index} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{output}\PY{p}{)}\PY{p}{)}\PY{p}{:}
+                        \PY{k}{if} \PY{n}{output}\PY{p}{[}\PY{n}{word\PYZus{}index}\PY{p}{]} \PY{o}{==} \PY{n}{word}\PY{p}{:}
+                            \PY{n}{output}\PY{p}{[}\PY{n}{word\PYZus{}index}\PY{p}{]} \PY{o}{=} \PY{n}{standard\PYZus{}digit}
+            
+            \PY{n}{condition}   \PY{o}{=} \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZlt{}BOS\PYZgt{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}  \PY{o}{+} \PY{n}{condition} \PY{o}{+} \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZlt{}EOS\PYZgt{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+            \PY{n}{output}      \PY{o}{=} \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZlt{}BOS\PYZgt{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}  \PY{o}{+} \PY{n}{output}  \PY{o}{+} \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZlt{}EOS\PYZgt{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+        
+            \PY{k}{return} \PY{n}{qid}\PY{p}{,} \PY{n}{condition}\PY{p}{,} \PY{n}{output}\PY{p}{,} \PY{n}{dictionary\PYZus{}standardization}
+        
+        
+        \PY{k}{def} \PY{n+nf}{create\PYZus{}vocabulary}\PY{p}{(}\PY{n}{word\PYZus{}list}\PY{p}{,} \PY{n}{max\PYZus{}vocab\PYZus{}size}\PY{p}{)}\PY{p}{:}
+            \PY{l+s+sd}{\PYZdq{}\PYZdq{}\PYZdq{} Create Vocabulary dictionary}
+        \PY{l+s+sd}{    Args:}
+        \PY{l+s+sd}{        text(str): inout word list}
+        \PY{l+s+sd}{        max\PYZus{}vocab\PYZus{}size: maximum number of words in the vocabulary}
+        \PY{l+s+sd}{    Returns:}
+        \PY{l+s+sd}{        word2id(dict): word to id mapping}
+        \PY{l+s+sd}{        id2word(dict): id to word mapping}
+        \PY{l+s+sd}{    \PYZdq{}\PYZdq{}\PYZdq{}}
+            \PY{n}{words} \PY{o}{=} \PY{p}{[}\PY{n}{word} \PY{k}{for} \PY{n}{sample} \PY{o+ow}{in} \PY{n}{word\PYZus{}list} \PY{k}{for} \PY{n}{word} \PY{o+ow}{in} \PY{n}{sample}\PY{p}{]}
+            \PY{n}{freq} \PY{o}{=} \PY{n}{Counter}\PY{p}{(}\PY{n}{words}\PY{p}{)}
+            \PY{n}{word2id} \PY{o}{=} \PY{p}{\PYZob{}}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZlt{}PAD\PYZgt{}}\PY{l+s+s1}{\PYZsq{}} \PY{p}{:} \PY{l+m+mi}{0}\PY{p}{\PYZcb{}}
+            \PY{n}{id2word} \PY{o}{=} \PY{p}{\PYZob{}}\PY{l+m+mi}{0} \PY{p}{:} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZlt{}PAD\PYZgt{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{\PYZcb{}}
+        
+            \PY{k}{for} \PY{n}{word}\PY{p}{,} \PY{n}{\PYZus{}} \PY{o+ow}{in} \PY{n}{freq}\PY{o}{.}\PY{n}{most\PYZus{}common}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+                \PY{n+nb}{id} \PY{o}{=} \PY{n+nb}{len}\PY{p}{(}\PY{n}{word2id}\PY{p}{)}
+                \PY{k}{if} \PY{n}{word} \PY{o+ow}{not} \PY{o+ow}{in} \PY{n}{word2id}\PY{p}{:}
+                    \PY{n}{word2id}\PY{p}{[}\PY{n}{word}\PY{p}{]} \PY{o}{=} \PY{n+nb}{id}
+                    \PY{n}{id2word}\PY{p}{[}\PY{n+nb}{id}\PY{p}{]} \PY{o}{=} \PY{n}{word}
+                    \PY{n+nb}{print}\PY{p}{(}\PY{n}{word}\PY{p}{)}
+                \PY{k}{if} \PY{n+nb}{id} \PY{o}{==} \PY{n}{max\PYZus{}vocab\PYZus{}size} \PY{o}{\PYZhy{}} \PY{l+m+mi}{1} \PY{p}{:}
+                    \PY{k}{break}
+        
+            \PY{k}{return} \PY{n}{word2id}\PY{p}{,} \PY{n}{id2word}
+        
+        
+        \PY{k}{def} \PY{n+nf}{replace\PYZus{}using\PYZus{}dict}\PY{p}{(}\PY{n+nb}{list}\PY{p}{,} \PY{n}{dictionary}\PY{p}{,} \PY{n}{drop\PYZus{}unknown}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}\PY{p}{:}
+            \PY{n}{translated\PYZus{}list} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+            \PY{k}{for} \PY{n}{line} \PY{o+ow}{in} \PY{n+nb}{list}\PY{p}{:}
+                \PY{k}{if} \PY{n}{drop\PYZus{}unknown}\PY{p}{:}
+                    \PY{n}{translated\PYZus{}line} \PY{o}{=} \PY{p}{[}\PY{n}{dictionary}\PY{p}{[}\PY{n}{word}\PY{p}{]} \PY{k}{for} \PY{n}{word} \PY{o+ow}{in} \PY{n}{line} \PY{k}{if} \PY{n}{word} \PY{o+ow}{in} \PY{n}{dictionary}\PY{p}{]}
+                \PY{k}{else}\PY{p}{:}
+                    \PY{n}{translated\PYZus{}line} \PY{o}{=} \PY{p}{[}\PY{n}{dictionary}\PY{p}{[}\PY{n}{word}\PY{p}{]} \PY{k}{if} \PY{n}{word} \PY{o+ow}{in} \PY{n}{dictionary} \PY{k}{else} \PY{n}{word} \PY{k}{for} \PY{n}{word} \PY{o+ow}{in} \PY{n}{line}\PY{p}{]}
+                \PY{n}{translated\PYZus{}list}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{translated\PYZus{}line}\PY{p}{)}
+            
+            \PY{k}{return} \PY{n}{translated\PYZus{}list}
+        
+        \PY{k}{def} \PY{n+nf}{pad\PYZus{}with\PYZus{}zero}\PY{p}{(}\PY{n+nb}{list}\PY{p}{,} \PY{n}{max\PYZus{}length}\PY{p}{,} \PY{n}{pad\PYZus{}type}\PY{p}{)}\PY{p}{:}
+            \PY{n}{padded\PYZus{}list} \PY{o}{=} \PY{n}{pad\PYZus{}sequences}\PY{p}{(}\PY{n+nb}{list}\PY{p}{,} \PY{n}{maxlen}\PY{o}{=}\PY{n}{max\PYZus{}length}\PY{p}{,} \PY{n}{padding}\PY{o}{=}\PY{n}{pad\PYZus{}type}\PY{p}{,} \PY{n}{truncating}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{post}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+            \PY{k}{return} \PY{n}{padded\PYZus{}list}
+        
+        
+        \PY{k}{def} \PY{n+nf}{log\PYZus{}to\PYZus{}shell}\PY{p}{(}\PY{n}{index}\PY{p}{,} \PY{n}{qid\PYZus{}raw}\PY{p}{,} \PY{n}{condition\PYZus{}raw}\PY{p}{,} \PY{n}{output\PYZus{}raw}\PY{p}{,} \PY{n}{decoded\PYZus{}seqeunce}\PY{p}{)}\PY{p}{:}
+            \PY{l+s+sd}{\PYZdq{}\PYZdq{}\PYZdq{} Prints information to shell}
+        \PY{l+s+sd}{    \PYZdq{}\PYZdq{}\PYZdq{}}
+            \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Sample index}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}       \PY{n}{index}\PY{p}{)}
+            \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{QID: }\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}              \PY{n}{qid\PYZus{}raw}\PY{p}{)}
+            \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{CONDITION: }\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}        \PY{n}{condition\PYZus{}raw}\PY{p}{)}
+            \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{OUTPUT: }\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}           \PY{n}{output\PYZus{}raw}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+            \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Predicted OUTPUT: }\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{decoded\PYZus{}seqeunce}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+        
+        
+        
+        \PY{k}{def} \PY{n+nf}{plot\PYZus{}word\PYZus{}cloud}\PY{p}{(}\PY{n}{word\PYZus{}list}\PY{p}{)}\PY{p}{:}
+            \PY{n}{words} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{ }\PY{l+s+s1}{\PYZsq{}}\PY{o}{.}\PY{n}{join}\PY{p}{(}\PY{n}{word\PYZus{}list}\PY{p}{)}
+            \PY{n}{wordcloud} \PY{o}{=} \PY{n}{WordCloud}\PY{p}{(}\PY{n}{width} \PY{o}{=} \PY{l+m+mi}{800}\PY{p}{,} \PY{n}{height} \PY{o}{=} \PY{l+m+mi}{800}\PY{p}{,} 
+                            \PY{n}{background\PYZus{}color} \PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{white}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+                            \PY{n}{stopwords} \PY{o}{=} \PY{k+kc}{None}\PY{p}{,}
+                            \PY{n}{collocations} \PY{o}{=} \PY{k+kc}{False}\PY{p}{,}
+                            \PY{n}{regexp}\PY{o}{=}\PY{k+kc}{None}\PY{p}{,}
+                            \PY{n}{min\PYZus{}word\PYZus{}length}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{,}
+                            \PY{n}{min\PYZus{}font\PYZus{}size} \PY{o}{=} \PY{l+m+mi}{10}\PY{p}{)}\PY{o}{.}\PY{n}{generate}\PY{p}{(}\PY{n}{words}\PY{p}{)} 
+                                 
+            \PY{c+c1}{\PYZsh{}plt.figure(figsize = (8, 8), facecolor = None) }
+            \PY{n}{plt}\PY{o}{.}\PY{n}{imshow}\PY{p}{(}\PY{n}{wordcloud}\PY{p}{)} 
+            \PY{n}{plt}\PY{o}{.}\PY{n}{axis}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{off}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)} 
+            \PY{n}{plt}\PY{o}{.}\PY{n}{tight\PYZus{}layout}\PY{p}{(}\PY{n}{pad} \PY{o}{=} \PY{l+m+mi}{0}\PY{p}{)} 
+            \PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+        
+        
+        \PY{k}{def} \PY{n+nf}{plot\PYZus{}length\PYZus{}distribution}\PY{p}{(}\PY{n+nb}{list}\PY{p}{,} \PY{n}{max\PYZus{}length}\PY{o}{=}\PY{l+m+mi}{100}\PY{p}{,} \PY{n}{cdf}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}\PY{p}{:}
+            \PY{n}{length\PYZus{}count} \PY{o}{=} \PY{p}{[}\PY{l+m+mi}{0} \PY{k}{for} \PY{n}{\PYZus{}} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{max\PYZus{}length}\PY{p}{)}\PY{p}{]}
+            \PY{c+c1}{\PYZsh{}item =[list]}
+            \PY{k}{for} \PY{n}{item} \PY{o+ow}{in} \PY{n+nb}{list}\PY{p}{:}
+                \PY{n}{item\PYZus{}length} \PY{o}{=} \PY{n+nb}{len}\PY{p}{(}\PY{n}{item}\PY{p}{)}
+                \PY{k}{if} \PY{n}{item\PYZus{}length} \PY{o}{\PYZlt{}} \PY{n}{max\PYZus{}length}\PY{p}{:}
+                    \PY{n}{length\PYZus{}count}\PY{p}{[}\PY{n}{item\PYZus{}length}\PY{p}{]} \PY{o}{+}\PY{o}{=} \PY{l+m+mi}{1}
+        
+            \PY{n}{length\PYZus{}count} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{n}{length\PYZus{}count}\PY{p}{)}
+            \PY{n}{length\PYZus{}freq} \PY{o}{=} \PY{n}{length\PYZus{}count}\PY{o}{/}\PY{n}{np}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{n}{length\PYZus{}count}\PY{p}{)}
+            \PY{k}{if} \PY{n}{cdf}\PY{p}{:}
+                \PY{n}{length\PYZus{}freq} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{cumsum}\PY{p}{(}\PY{n}{length\PYZus{}freq}\PY{p}{)}
+            \PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{length\PYZus{}freq}\PY{p}{)}
+            \PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+        
+        
+            \PY{l+s+sd}{\PYZdq{}\PYZdq{}\PYZdq{}}
+        \PY{l+s+sd}{    print(QIDs\PYZus{}process[:2],\PYZdq{}\PYZbs{}n\PYZdq{})}
+        \PY{l+s+sd}{    print(CONDITIONs\PYZus{}process[:2],\PYZdq{}\PYZbs{}n\PYZdq{})}
+        \PY{l+s+sd}{    print(CONDITIONs[:2],\PYZdq{}\PYZbs{}n\PYZdq{})}
+        \PY{l+s+sd}{    print(OUTPUTs\PYZus{}process[:2])}
+        \PY{l+s+sd}{    }
+        \PY{l+s+sd}{    all\PYZus{}word = [word for i in range(len(CONDITIONs\PYZus{}process)) for word in CONDITIONs\PYZus{}process[i]]}
+        \PY{l+s+sd}{    plot\PYZus{}word\PYZus{}cloud(all\PYZus{}word)}
+        \PY{l+s+sd}{    all\PYZus{}word = [word for i in range(len(OUTPUTs\PYZus{}process)) for word in OUTPUTs\PYZus{}process[i]]}
+        \PY{l+s+sd}{    plot\PYZus{}word\PYZus{}cloud(all\PYZus{}word)}
+        \PY{l+s+sd}{    \PYZdq{}\PYZdq{}\PYZdq{}}
+            
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+/home/kamal/.local/lib/python3.6/site-packages/tensorflow/python/framework/dtypes.py:523: FutureWarning: Passing (type, 1) or '1type' as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / '(1,)type'.
+  \_np\_qint8 = np.dtype([("qint8", np.int8, 1)])
+/home/kamal/.local/lib/python3.6/site-packages/tensorflow/python/framework/dtypes.py:524: FutureWarning: Passing (type, 1) or '1type' as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / '(1,)type'.
+  \_np\_quint8 = np.dtype([("quint8", np.uint8, 1)])
+/home/kamal/.local/lib/python3.6/site-packages/tensorflow/python/framework/dtypes.py:525: FutureWarning: Passing (type, 1) or '1type' as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / '(1,)type'.
+  \_np\_qint16 = np.dtype([("qint16", np.int16, 1)])
+/home/kamal/.local/lib/python3.6/site-packages/tensorflow/python/framework/dtypes.py:526: FutureWarning: Passing (type, 1) or '1type' as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / '(1,)type'.
+  \_np\_quint16 = np.dtype([("quint16", np.uint16, 1)])
+/home/kamal/.local/lib/python3.6/site-packages/tensorflow/python/framework/dtypes.py:527: FutureWarning: Passing (type, 1) or '1type' as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / '(1,)type'.
+  \_np\_qint32 = np.dtype([("qint32", np.int32, 1)])
+/home/kamal/.local/lib/python3.6/site-packages/tensorflow/python/framework/dtypes.py:532: FutureWarning: Passing (type, 1) or '1type' as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / '(1,)type'.
+  np\_resource = np.dtype([("resource", np.ubyte, 1)])
+
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}2}]:} \PY{l+s+sd}{\PYZdq{}\PYZdq{}\PYZdq{}\PYZdq{}}
+        \PY{l+s+sd}{This file reads and preproces the train dataset and creates (and trains) a seq2seq model}
+        \PY{l+s+sd}{using Recurrent Neurak Networks to predict a target sequnce from an input sequnce.}
+        \PY{l+s+sd}{openpyxl}
+        \PY{l+s+sd}{xlrd}
+        \PY{l+s+sd}{numpy}
+        \PY{l+s+sd}{tensorflow}
+        \PY{l+s+sd}{pandas}
+        \PY{l+s+sd}{sklearn}
+        \PY{l+s+sd}{\PYZdq{}\PYZdq{}\PYZdq{}}
+        
+        \PY{c+c1}{\PYZsh{}\PYZsh{}\PYZsh{} Import required packages}
+        \PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}
+        \PY{k+kn}{import} \PY{n+nn}{random}
+        \PY{k+kn}{import} \PY{n+nn}{argparse}
+        \PY{k+kn}{import} \PY{n+nn}{pickle}
+        \PY{k+kn}{import} \PY{n+nn}{os}
+        
+        \PY{k+kn}{import} \PY{n+nn}{tensorflow} \PY{k}{as} \PY{n+nn}{tf}
+        \PY{k+kn}{from} \PY{n+nn}{tensorflow}\PY{n+nn}{.}\PY{n+nn}{python} \PY{k}{import} \PY{n}{keras}
+        \PY{k+kn}{from} \PY{n+nn}{keras}\PY{n+nn}{.}\PY{n+nn}{models} \PY{k}{import} \PY{n}{Sequential}\PY{p}{,} \PY{n}{load\PYZus{}model}\PY{p}{,} \PY{n}{Model}\PY{p}{,} \PY{n}{Input}
+        \PY{k+kn}{from} \PY{n+nn}{keras}\PY{n+nn}{.}\PY{n+nn}{layers} \PY{k}{import} \PY{n}{Embedding}\PY{p}{,} \PY{n}{LSTM}\PY{p}{,} \PY{n}{Dense}\PY{p}{,} \PY{n}{Activation}\PY{p}{,} \PY{n}{Dropout}\PY{p}{,} \PY{n}{TimeDistributed}\PY{p}{,} \PY{n}{Bidirectional}\PY{p}{,} \PY{n}{Lambda}
+        \PY{k+kn}{from} \PY{n+nn}{keras}\PY{n+nn}{.}\PY{n+nn}{callbacks} \PY{k}{import} \PY{n}{ModelCheckpoint}
+        \PY{k+kn}{from} \PY{n+nn}{keras} \PY{k}{import} \PY{n}{backend} \PY{k}{as} \PY{n}{K}
+        
+        \PY{c+c1}{\PYZsh{}\PYZsh{} Import helper functions}
+        \PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{model\PYZus{}selection} \PY{k}{import} \PY{n}{train\PYZus{}test\PYZus{}split}
+        
+        \PY{k+kn}{from} \PY{n+nn}{tools} \PY{k}{import} \PY{n}{read\PYZus{}data}\PY{p}{,} \PY{n}{prepare\PYZus{}data}\PY{p}{,} \PY{n}{create\PYZus{}vocabulary}\PY{p}{,} \PY{n}{replace\PYZus{}using\PYZus{}dict}\PY{p}{,} \PY{n}{pad\PYZus{}with\PYZus{}zero}
+        
+        \PY{c+c1}{\PYZsh{}\PYZsh{} Define default training data path}
+        \PY{n}{MT\PYZus{}TRAINING\PYZus{}CORPUS\PYZus{}PATH}  \PY{o}{=} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{./data/MT\PYZus{}training\PYZus{}corpus.xlsx}\PY{l+s+s2}{\PYZdq{}}
+        
+        \PY{c+c1}{\PYZsh{}\PYZsh{} Specify path to save model and metadata}
+        \PY{n}{MT\PYZus{}SEQ2SEQ\PYZus{}MODEL\PYZus{}PATH}    \PY{o}{=} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{./model/mt\PYZus{}seq2seq\PYZus{}model.h5}\PY{l+s+s2}{\PYZdq{}}
+        \PY{n}{MT\PYZus{}MODEL\PYZus{}CHECKPOINT\PYZus{}PATH} \PY{o}{=} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{./model/model.chpt}\PY{l+s+s2}{\PYZdq{}}
+        \PY{n}{MT\PYZus{}META\PYZus{}DATA\PYZus{}FILE\PYZus{}PATH}   \PY{o}{=} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{./model/metadata.pickle}\PY{l+s+s2}{\PYZdq{}}
+        
+        \PY{c+c1}{\PYZsh{}\PYZsh{} Define model parameter}
+        \PY{c+c1}{\PYZsh{} Encoder and Decoder maximum vocabulary size}
+        \PY{n}{encoder\PYZus{}vocab\PYZus{}size} \PY{o}{=} \PY{l+m+mi}{150}
+        \PY{n}{decoder\PYZus{}vocab\PYZus{}size} \PY{o}{=} \PY{l+m+mi}{50}
+        
+        \PY{c+c1}{\PYZsh{} Encoder and Decoder sequnces length}
+        \PY{n}{encoder\PYZus{}seq\PYZus{}length} \PY{o}{=} \PY{l+m+mi}{20}
+        \PY{n}{decoder\PYZus{}seq\PYZus{}length} \PY{o}{=} \PY{l+m+mi}{15}
+        
+        \PY{c+c1}{\PYZsh{} Number of training epcohs}
+        \PY{n}{num\PYZus{}epochs} \PY{o}{=} \PY{l+m+mi}{30}
+        
+        \PY{c+c1}{\PYZsh{} Training Batch size}
+        \PY{n}{batch\PYZus{}size} \PY{o}{=} \PY{l+m+mi}{20}
+        
+        \PY{c+c1}{\PYZsh{} Number of LSTM latend dimention in both Encoder and Decoder}
+        \PY{n}{num\PYZus{}latent\PYZus{}dim} \PY{o}{=} \PY{l+m+mi}{40}
+        
+        \PY{c+c1}{\PYZsh{} Fraction of data used for validation during training the model}
+        \PY{n}{validation\PYZus{}size} \PY{o}{=} \PY{l+m+mf}{0.1}
+        
+        
+        \PY{k}{def} \PY{n+nf}{data\PYZus{}generator}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{y}\PY{p}{,} \PY{n}{batch\PYZus{}size}\PY{p}{)}\PY{p}{:}
+            \PY{l+s+sd}{\PYZdq{}\PYZdq{}\PYZdq{} Creates a data genrator to feed encoder and decoder input sequnces and decoder}
+        \PY{l+s+sd}{    target sequnce}
+        \PY{l+s+sd}{    Args:}
+        \PY{l+s+sd}{        X: input sequnces}
+        \PY{l+s+sd}{        y: target sequnces}
+        \PY{l+s+sd}{    Returns:}
+        \PY{l+s+sd}{         yields a batch of encoder and decoder input sequnces and decoder target sequnce}
+        \PY{l+s+sd}{    \PYZdq{}\PYZdq{}\PYZdq{}}
+            \PY{k}{while} \PY{k+kc}{True}\PY{p}{:}
+                \PY{k}{for} \PY{n}{j} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{random}\PY{o}{.}\PY{n}{randint}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,}\PY{n+nb}{len}\PY{p}{(}\PY{n}{X}\PY{p}{)}\PY{o}{\PYZhy{}}\PY{n}{batch\PYZus{}size}\PY{p}{)}\PY{p}{)}\PY{p}{:}
+                    \PY{n}{encoder\PYZus{}input\PYZus{}sequnce}  \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{zeros}\PY{p}{(}\PY{p}{(}\PY{n}{batch\PYZus{}size}\PY{p}{,} \PY{n}{encoder\PYZus{}seq\PYZus{}length}\PY{p}{,} \PY{n}{encoder\PYZus{}vocab\PYZus{}size}\PY{p}{)}\PY{p}{,} \PY{n}{dtype}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{float32}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+                    \PY{n}{decoder\PYZus{}input\PYZus{}sequnce}  \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{zeros}\PY{p}{(}\PY{p}{(}\PY{n}{batch\PYZus{}size}\PY{p}{,} \PY{n}{decoder\PYZus{}seq\PYZus{}length}\PY{p}{,} \PY{n}{decoder\PYZus{}vocab\PYZus{}size}\PY{p}{)}\PY{p}{,} \PY{n}{dtype}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{float32}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+                    \PY{n}{decoder\PYZus{}target\PYZus{}sequnce} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{zeros}\PY{p}{(}\PY{p}{(}\PY{n}{batch\PYZus{}size}\PY{p}{,} \PY{n}{decoder\PYZus{}seq\PYZus{}length}\PY{p}{,} \PY{n}{decoder\PYZus{}vocab\PYZus{}size}\PY{p}{)}\PY{p}{,} \PY{n}{dtype}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{float32}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+        
+                    \PY{k}{for} \PY{n}{i}\PY{p}{,} \PY{p}{(}\PY{n}{input\PYZus{}seq}\PY{p}{,} \PY{n}{target\PYZus{}seq}\PY{p}{)} \PY{o+ow}{in} \PY{n+nb}{enumerate}\PY{p}{(}\PY{n+nb}{zip}\PY{p}{(}\PY{n}{X}\PY{p}{[}\PY{n}{j}\PY{p}{:}\PY{n}{j}\PY{o}{+}\PY{n}{batch\PYZus{}size}\PY{p}{]}\PY{p}{,} \PY{n}{y}\PY{p}{[}\PY{n}{j}\PY{p}{:}\PY{n}{j}\PY{o}{+}\PY{n}{batch\PYZus{}size}\PY{p}{]}\PY{p}{)}\PY{p}{)}\PY{p}{:}
+                        \PY{k}{for} \PY{n}{t}\PY{p}{,} \PY{n}{word} \PY{o+ow}{in} \PY{n+nb}{enumerate}\PY{p}{(}\PY{n}{input\PYZus{}seq}\PY{p}{)}\PY{p}{:}
+                            \PY{n}{encoder\PYZus{}input\PYZus{}sequnce}\PY{p}{[}\PY{n}{i}\PY{p}{,} \PY{n}{t}\PY{p}{,} \PY{n}{word}\PY{p}{]} \PY{o}{=} \PY{l+m+mi}{1}  \PY{c+c1}{\PYZsh{} encoder input seq}
+                        \PY{k}{for} \PY{n}{t}\PY{p}{,} \PY{n}{word} \PY{o+ow}{in} \PY{n+nb}{enumerate}\PY{p}{(}\PY{n}{target\PYZus{}seq}\PY{p}{)}\PY{p}{:}
+                            \PY{k}{if} \PY{n}{t} \PY{o}{\PYZlt{}} \PY{n}{decoder\PYZus{}seq\PYZus{}length}\PY{p}{:}
+                                \PY{n}{decoder\PYZus{}input\PYZus{}sequnce}\PY{p}{[}\PY{n}{i}\PY{p}{,} \PY{n}{t}\PY{p}{,} \PY{n}{word}\PY{p}{]} \PY{o}{=} \PY{l+m+mi}{1} \PY{c+c1}{\PYZsh{} decoder input seq}
+                            \PY{k}{if} \PY{n}{t}\PY{o}{\PYZgt{}}\PY{l+m+mi}{0}\PY{p}{:}
+                                \PY{n}{decoder\PYZus{}target\PYZus{}sequnce}\PY{p}{[}\PY{n}{i}\PY{p}{,} \PY{n}{t}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{,} \PY{n}{word}\PY{p}{]} \PY{o}{=} \PY{l+m+mi}{1} \PY{c+c1}{\PYZsh{} decoder target seq}
+        
+                    \PY{k}{yield}\PY{p}{(}\PY{p}{[}\PY{n}{encoder\PYZus{}input\PYZus{}sequnce}\PY{p}{,} \PY{n}{decoder\PYZus{}input\PYZus{}sequnce}\PY{p}{]}\PY{p}{,} \PY{n}{decoder\PYZus{}target\PYZus{}sequnce}\PY{p}{)}            
+         
+        
+        
+        \PY{k}{def} \PY{n+nf}{create\PYZus{}seq2seq\PYZus{}model}\PY{p}{(}\PY{n}{encoder\PYZus{}vocab\PYZus{}size}\PY{p}{,} \PY{n}{decoder\PYZus{}vocab\PYZus{}size}\PY{p}{,} \PY{n}{latent\PYZus{}dim}\PY{p}{)}\PY{p}{:}
+            \PY{l+s+sd}{\PYZdq{}\PYZdq{}\PYZdq{} Creates a seq2seq model using Recurrent Neural Networks(RNN).}
+        \PY{l+s+sd}{    The encoder consists of a left\PYZhy{}to\PYZhy{}right LSTM layer and outputs states to decoder.}
+        \PY{l+s+sd}{    The decoder is also consists of a left\PYZhy{}to\PYZhy{}right LSTM layer and outputs a sequence that}
+        \PY{l+s+sd}{    are fed to time distributed fully connected layers with softmax activation to predict }
+        \PY{l+s+sd}{    target sequence. }
+        \PY{l+s+sd}{    Args:}
+        \PY{l+s+sd}{        encoder\PYZus{}vocab\PYZus{}size: number of encoder tokens (i.e., encoder vocab size)}
+        \PY{l+s+sd}{        decoder\PYZus{}vocab\PYZus{}size: size of  decoder tokens (i.e., decoder vocab size)}
+        \PY{l+s+sd}{        latent\PYZus{}dim: number of LSTM hidden dimenetions}
+        \PY{l+s+sd}{    Returns:}
+        \PY{l+s+sd}{        model: seq2seq model}
+        \PY{l+s+sd}{    \PYZdq{}\PYZdq{}\PYZdq{}}
+            
+            \PY{c+c1}{\PYZsh{}\PYZsh{}\PYZsh{} Encoder}
+            \PY{c+c1}{\PYZsh{}\PYZsh{} Input layer}
+            \PY{n}{encoder\PYZus{}inputs} \PY{o}{=} \PY{n}{Input}\PY{p}{(}\PY{n}{shape}\PY{o}{=}\PY{p}{(}\PY{k+kc}{None}\PY{p}{,} \PY{n}{encoder\PYZus{}vocab\PYZus{}size}\PY{p}{)}\PY{p}{,} \PY{n}{name}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{encoder\PYZus{}input}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+            \PY{c+c1}{\PYZsh{}\PYZsh{} LSTM layer}
+            \PY{n}{encoder} \PY{o}{=} \PY{n}{LSTM}\PY{p}{(}\PY{n}{latent\PYZus{}dim}\PY{p}{,} \PY{n}{return\PYZus{}state}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,} \PY{n}{name}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{encoder\PYZus{}lstm}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+            \PY{n}{encoder\PYZus{}outputs}\PY{p}{,} \PY{n}{state\PYZus{}h}\PY{p}{,} \PY{n}{state\PYZus{}c} \PY{o}{=} \PY{n}{encoder}\PY{p}{(}\PY{n}{encoder\PYZus{}inputs}\PY{p}{)}
+            \PY{c+c1}{\PYZsh{} We keep encoder states and discard encoder ouput.}
+            \PY{n}{encoder\PYZus{}states} \PY{o}{=} \PY{p}{[}\PY{n}{state\PYZus{}h}\PY{p}{,} \PY{n}{state\PYZus{}c}\PY{p}{]}
+        
+            \PY{c+c1}{\PYZsh{}\PYZsh{}\PYZsh{} Decoder}
+            \PY{c+c1}{\PYZsh{}\PYZsh{} Input layer}
+            \PY{n}{decoder\PYZus{}inputs} \PY{o}{=} \PY{n}{Input}\PY{p}{(}\PY{n}{shape}\PY{o}{=}\PY{p}{(}\PY{k+kc}{None}\PY{p}{,} \PY{n}{decoder\PYZus{}vocab\PYZus{}size}\PY{p}{)}\PY{p}{,} \PY{n}{name}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{decoder\PYZus{}input}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+            \PY{c+c1}{\PYZsh{}\PYZsh{} Left to right LSTM layer}
+            \PY{c+c1}{\PYZsh{} We set up our decoder to return full output sequences,}
+            \PY{n}{decoder\PYZus{}lstm} \PY{o}{=} \PY{n}{LSTM}\PY{p}{(}\PY{n}{latent\PYZus{}dim}\PY{p}{,} \PY{n}{return\PYZus{}sequences}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,} \PY{n}{return\PYZus{}state}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,} \PY{n}{name}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{decoder\PYZus{}lstm}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+            \PY{n}{decoder\PYZus{}outputs}\PY{p}{,} \PY{n}{\PYZus{}}\PY{p}{,} \PY{n}{\PYZus{}} \PY{o}{=} \PY{n}{decoder\PYZus{}lstm}\PY{p}{(}\PY{n}{decoder\PYZus{}inputs}\PY{p}{,}
+                                                \PY{n}{initial\PYZus{}state}\PY{o}{=}\PY{n}{encoder\PYZus{}states}\PY{p}{)}
+            \PY{c+c1}{\PYZsh{}\PYZsh{} Fully connected layer}
+            \PY{n}{decoder\PYZus{}dense} \PY{o}{=} \PY{n}{Dense}\PY{p}{(}\PY{n}{decoder\PYZus{}vocab\PYZus{}size}\PY{p}{,} \PY{n}{activation}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{softmax}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{name}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{decoder\PYZus{}dense}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+            \PY{n}{decoder\PYZus{}outputs} \PY{o}{=} \PY{n}{decoder\PYZus{}dense}\PY{p}{(}\PY{n}{decoder\PYZus{}outputs}\PY{p}{)}
+        
+            \PY{c+c1}{\PYZsh{}\PYZsh{}\PYZsh{} Model to jointly train Encoder and Decoder }
+            \PY{n}{model} \PY{o}{=} \PY{n}{Model}\PY{p}{(}\PY{p}{[}\PY{n}{encoder\PYZus{}inputs}\PY{p}{,} \PY{n}{decoder\PYZus{}inputs}\PY{p}{]}\PY{p}{,} \PY{n}{decoder\PYZus{}outputs}\PY{p}{)}
+        
+            \PY{k}{return} \PY{n}{model}
+        
+        \PY{k}{def} \PY{n+nf}{create\PYZus{}seq2seq\PYZus{}inference\PYZus{}model}\PY{p}{(}\PY{n}{model}\PY{p}{,} \PY{n}{latent\PYZus{}dim}\PY{p}{)}\PY{p}{:}
+            \PY{l+s+sd}{\PYZdq{}\PYZdq{}\PYZdq{} Creates a seq2seq inference model by extracting Encoder and Decoder models}
+        \PY{l+s+sd}{     from the input seq2seq model.}
+        \PY{l+s+sd}{    Args:}
+        \PY{l+s+sd}{        model: a seq2seq model}
+        \PY{l+s+sd}{        laten\PYZus{}dim: number of latent dimention of the seq2seq model}
+        \PY{l+s+sd}{    Returns:}
+        \PY{l+s+sd}{        encoder\PYZus{}model: encoder model of input seq2seq model}
+        \PY{l+s+sd}{        decoder\PYZus{}model: decoder model of input seq2seq model}
+        \PY{l+s+sd}{    \PYZdq{}\PYZdq{}\PYZdq{}}
+            \PY{c+c1}{\PYZsh{}\PYZsh{}\PYZsh{} Inference Model}
+            \PY{c+c1}{\PYZsh{} 1. Encode the input sequence using Encoder and return state for decoder input}
+            \PY{c+c1}{\PYZsh{} 2. Run one step of decoder with this intial state and \PYZdq{}start of sequnce\PYZdq{} token}
+            \PY{c+c1}{\PYZsh{}  as input. The output will be used as the next decoder input sequnce token}
+            \PY{c+c1}{\PYZsh{} 3. This procedure is repteated to predict all output sequnce }
+            
+            \PY{c+c1}{\PYZsh{}\PYZsh{}\PYZsh{} Encoder Model}
+            \PY{n}{encoder\PYZus{}inputs} \PY{o}{=} \PY{n}{model}\PY{o}{.}\PY{n}{input}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]} 
+            \PY{n}{encoder\PYZus{}outputs}\PY{p}{,} \PY{n}{state\PYZus{}h\PYZus{}enc}\PY{p}{,} \PY{n}{state\PYZus{}c\PYZus{}enc} \PY{o}{=} \PY{n}{model}\PY{o}{.}\PY{n}{get\PYZus{}layer}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{encoder\PYZus{}lstm}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{o}{.}\PY{n}{output}   \PY{c+c1}{\PYZsh{} lstm\PYZus{}1}
+            \PY{n}{encoder\PYZus{}states} \PY{o}{=} \PY{p}{[}\PY{n}{state\PYZus{}h\PYZus{}enc}\PY{p}{,} \PY{n}{state\PYZus{}c\PYZus{}enc}\PY{p}{]}
+            \PY{n}{encoder\PYZus{}model} \PY{o}{=} \PY{n}{Model}\PY{p}{(}\PY{n}{encoder\PYZus{}inputs}\PY{p}{,} \PY{n}{encoder\PYZus{}states}\PY{p}{)}
+            \PY{c+c1}{\PYZsh{}\PYZsh{}\PYZsh{} Decoder Model}
+            \PY{c+c1}{\PYZsh{}\PYZsh{} Decoder State Input}
+            \PY{n}{decoder\PYZus{}inputs} \PY{o}{=} \PY{n}{model}\PY{o}{.}\PY{n}{input}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}
+            \PY{n}{decoder\PYZus{}state\PYZus{}input\PYZus{}h} \PY{o}{=} \PY{n}{Input}\PY{p}{(}\PY{n}{shape}\PY{o}{=}\PY{p}{(}\PY{n}{latent\PYZus{}dim}\PY{p}{,}\PY{p}{)}\PY{p}{,} \PY{n}{name}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{input\PYZus{}3}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+            \PY{n}{decoder\PYZus{}state\PYZus{}input\PYZus{}c} \PY{o}{=} \PY{n}{Input}\PY{p}{(}\PY{n}{shape}\PY{o}{=}\PY{p}{(}\PY{n}{latent\PYZus{}dim}\PY{p}{,}\PY{p}{)}\PY{p}{,} \PY{n}{name}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{input\PYZus{}4}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+            \PY{n}{decoder\PYZus{}states\PYZus{}inputs} \PY{o}{=} \PY{p}{[}\PY{n}{decoder\PYZus{}state\PYZus{}input\PYZus{}h}\PY{p}{,} \PY{n}{decoder\PYZus{}state\PYZus{}input\PYZus{}c}\PY{p}{]}
+            \PY{c+c1}{\PYZsh{}\PYZsh{} Decoder LSTM layer}
+            \PY{n}{decoder\PYZus{}lstm} \PY{o}{=} \PY{n}{model}\PY{o}{.}\PY{n}{get\PYZus{}layer}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{decoder\PYZus{}lstm}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+            \PY{n}{decoder\PYZus{}outputs}\PY{p}{,} \PY{n}{state\PYZus{}h\PYZus{}dec}\PY{p}{,} \PY{n}{state\PYZus{}c\PYZus{}dec} \PY{o}{=} \PY{n}{decoder\PYZus{}lstm}\PY{p}{(}
+                \PY{n}{decoder\PYZus{}inputs}\PY{p}{,} \PY{n}{initial\PYZus{}state}\PY{o}{=}\PY{n}{decoder\PYZus{}states\PYZus{}inputs}\PY{p}{)}
+            \PY{n}{decoder\PYZus{}states} \PY{o}{=} \PY{p}{[}\PY{n}{state\PYZus{}h\PYZus{}dec}\PY{p}{,} \PY{n}{state\PYZus{}c\PYZus{}dec}\PY{p}{]}
+            \PY{c+c1}{\PYZsh{}\PYZsh{} Decoder Fully connected layer}
+            \PY{n}{decoder\PYZus{}dense} \PY{o}{=} \PY{n}{model}\PY{o}{.}\PY{n}{get\PYZus{}layer}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{decoder\PYZus{}dense}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+            \PY{n}{decoder\PYZus{}outputs} \PY{o}{=} \PY{n}{decoder\PYZus{}dense}\PY{p}{(}\PY{n}{decoder\PYZus{}outputs}\PY{p}{)}
+        
+            \PY{n}{decoder\PYZus{}model} \PY{o}{=} \PY{n}{Model}\PY{p}{(}\PY{p}{[}\PY{n}{decoder\PYZus{}inputs}\PY{p}{]} \PY{o}{+} \PY{n}{decoder\PYZus{}states\PYZus{}inputs}\PY{p}{,}
+                                  \PY{p}{[}\PY{n}{decoder\PYZus{}outputs}\PY{p}{]} \PY{o}{+} \PY{n}{decoder\PYZus{}states}\PY{p}{)}
+        
+            \PY{k}{return} \PY{n}{encoder\PYZus{}model}\PY{p}{,} \PY{n}{decoder\PYZus{}model}
+        
+        \PY{k}{def} \PY{n+nf}{train\PYZus{}seq2seq\PYZus{}model}\PY{p}{(}\PY{n}{model}\PY{p}{,} \PY{n}{X\PYZus{}train}\PY{p}{,} \PY{n}{X\PYZus{}valid}\PY{p}{,} \PY{n}{y\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}valid}\PY{p}{,} \PY{n}{epochs}\PY{p}{)}\PY{p}{:}
+            \PY{l+s+sd}{\PYZdq{}\PYZdq{}\PYZdq{} Compiles and trains the seq2seq model. The train data is fed to model}
+        \PY{l+s+sd}{    using a generator function}
+        \PY{l+s+sd}{    Args:}
+        \PY{l+s+sd}{        model: seq2seq model}
+        \PY{l+s+sd}{        X\PYZus{}train: train data input sequnce (conditions)}
+        \PY{l+s+sd}{        X\PYZus{}valid: train data input sequnce (conditions)}
+        \PY{l+s+sd}{        y\PYZus{}train: validation target sequnce sequnce (ouputs)}
+        \PY{l+s+sd}{        y\PYZus{}valid: validation target sequnce (ouputs)}
+        \PY{l+s+sd}{        epochs: number of epochs to train model}
+        \PY{l+s+sd}{    Returns:}
+        \PY{l+s+sd}{        model: trained seq2seq model}
+        \PY{l+s+sd}{    \PYZdq{}\PYZdq{}\PYZdq{}}
+        
+            \PY{c+c1}{\PYZsh{} Model is trainined to minimize cross enthrop between true target sequnce}
+            \PY{c+c1}{\PYZsh{} and predicted target sequnce}
+            \PY{c+c1}{\PYZsh{} Optimizer is set to Nadam and accuracy is used as metric}
+            \PY{n}{model}\PY{o}{.}\PY{n}{compile}\PY{p}{(}\PY{n}{loss}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{categorical\PYZus{}crossentropy}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+                          \PY{n}{optimizer}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Nadam}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+                          \PY{n}{metrics}\PY{o}{=}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{acc}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}
+            
+            \PY{c+c1}{\PYZsh{} Creats data genrators to feed train and validation data}
+            \PY{n}{train\PYZus{}data\PYZus{}generator} \PY{o}{=} \PY{n}{data\PYZus{}generator}\PY{p}{(}\PY{n}{X\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}train}\PY{p}{,} \PY{n}{batch\PYZus{}size}\PY{p}{)}
+            \PY{n}{valid\PYZus{}data\PYZus{}generator} \PY{o}{=} \PY{n}{data\PYZus{}generator}\PY{p}{(}\PY{n}{X\PYZus{}valid}\PY{p}{,} \PY{n}{y\PYZus{}valid}\PY{p}{,} \PY{n}{batch\PYZus{}size}\PY{p}{)}
+            
+            \PY{c+c1}{\PYZsh{} Define callback fo model checkpoint}
+            \PY{n}{callbacks} \PY{o}{=} \PY{p}{[}\PY{n}{ModelCheckpoint}\PY{p}{(}\PY{n}{MT\PYZus{}MODEL\PYZus{}CHECKPOINT\PYZus{}PATH}\PY{p}{,} \PY{n}{save\PYZus{}best\PYZus{}only}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,} \PY{n}{save\PYZus{}weights\PYZus{}only}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}\PY{p}{]}
+            
+            \PY{c+c1}{\PYZsh{} Train the model}
+            \PY{n}{model}\PY{o}{.}\PY{n}{fit\PYZus{}generator}\PY{p}{(}\PY{n}{train\PYZus{}data\PYZus{}generator}\PY{p}{,}
+                                \PY{n}{validation\PYZus{}data}\PY{o}{=}\PY{n}{valid\PYZus{}data\PYZus{}generator}\PY{p}{,}
+                                \PY{n}{epochs}\PY{o}{=}\PY{n}{epochs}\PY{p}{,}
+                                \PY{n}{callbacks}\PY{o}{=}\PY{n}{callbacks}\PY{p}{,}
+                                \PY{n}{verbose}\PY{o}{=}\PY{l+m+mi}{2}\PY{p}{,}
+                                \PY{n}{steps\PYZus{}per\PYZus{}epoch}\PY{o}{=}\PY{n+nb}{len}\PY{p}{(}\PY{n}{X\PYZus{}train}\PY{p}{)}\PY{o}{/}\PY{n}{batch\PYZus{}size}\PY{p}{,}
+                                \PY{n}{validation\PYZus{}steps}\PY{o}{=}\PY{n+nb}{len}\PY{p}{(}\PY{n}{X\PYZus{}valid}\PY{p}{)}\PY{o}{/}\PY{n}{batch\PYZus{}size}\PY{p}{)}
+        
+            \PY{k}{return} \PY{n}{model}
+            
+        
+        \PY{k}{def} \PY{n+nf}{main}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+            \PY{l+s+sd}{\PYZdq{}\PYZdq{}\PYZdq{} The main steps to train a seq2seq model:}
+        \PY{l+s+sd}{    1. Read dataset}
+        \PY{l+s+sd}{    2. Preproces each sequnce (create standarized sequnces)}
+        \PY{l+s+sd}{        a. Change QID, CONDITION and OUTPUT text to lowercas}
+        \PY{l+s+sd}{        b. split QID, CONDITION and OUTPUT text into tokens (words)}
+        \PY{l+s+sd}{        c. Replace QID tokens in each sample with standrized tokens (i.e., \PYZlt{}QID0\PYZgt{}, \PYZlt{}QID1\PYZgt{}, ...)}
+        \PY{l+s+sd}{        d. Replace digit tokens in each sample with standarized tokens (i.e., \PYZlt{}DGT0\PYZgt{}, \PYZlt{}DGT1\PYZgt{}, ...)}
+        \PY{l+s+sd}{        e. Create standardization dictionary for each sample}
+        \PY{l+s+sd}{        f. Add special tokens \PYZlt{}BOS\PYZgt{} and \PYZlt{}EOS\PYZgt{} to the begining and end of each sequence}
+        \PY{l+s+sd}{    3. Create dictinries to convert input and target sequnces to an integer id}
+        \PY{l+s+sd}{    4. Replace input and outpu sequnce tokens with an integre id}
+        \PY{l+s+sd}{    5. Pad sequnces with zero to create fixed size input and target sequnces}
+        \PY{l+s+sd}{        a. Input sequnce is pre\PYZhy{}padded with zero}
+        \PY{l+s+sd}{        b. Target sequnce is post\PYZhy{}padded }
+        \PY{l+s+sd}{    4. Create a seq2seq model}
+        \PY{l+s+sd}{    4. Train the model}
+        \PY{l+s+sd}{    5. Save the model and model metadata (inclding dictionaries to conver words to id)}
+        \PY{l+s+sd}{    \PYZdq{}\PYZdq{}\PYZdq{}}
+            
+            \PY{n}{train\PYZus{}data\PYZus{}path} \PY{o}{=} \PY{n}{MT\PYZus{}TRAINING\PYZus{}CORPUS\PYZus{}PATH}
+        
+        
+            \PY{c+c1}{\PYZsh{} Read dataset from Excel file}
+            \PY{n}{qids\PYZus{}raw}\PY{p}{,} \PY{n}{conditions\PYZus{}raw}\PY{p}{,} \PY{n}{output\PYZus{}raw} \PY{o}{=} \PY{n}{read\PYZus{}data}\PY{p}{(}\PY{n}{train\PYZus{}data\PYZus{}path}\PY{p}{)}
+            \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{Loaded train data set from [}\PY{l+s+si}{\PYZob{}\PYZcb{}}\PY{l+s+s2}{]}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{\PYZdq{}}\PY{o}{.}\PY{n}{format}\PY{p}{(}\PY{n}{train\PYZus{}data\PYZus{}path}\PY{p}{)}\PY{p}{)}
+        
+            \PY{c+c1}{\PYZsh{} Preprocess the raw input text data}
+            \PY{n}{\PYZus{}}\PY{p}{,} \PY{n}{conditions}\PY{p}{,} \PY{n}{outputs}\PY{p}{,} \PY{n}{dictionaries\PYZus{}lemanization} \PY{o}{=} \PY{n}{prepare\PYZus{}data}\PY{p}{(}\PY{n}{qids\PYZus{}raw}\PY{p}{,} \PY{n}{conditions\PYZus{}raw}\PY{p}{,} \PY{n}{output\PYZus{}raw}\PY{p}{)}
+            
+            \PY{c+c1}{\PYZsh{} Create dictionaries to convert between word and an integer id}
+            \PY{c+c1}{\PYZsh{} for conditions (Human Longuage) and ouputs (Machine longuage)}
+            \PY{n}{condition\PYZus{}word2id}\PY{p}{,} \PY{n}{condition\PYZus{}id2word} \PY{o}{=} \PY{n}{create\PYZus{}vocabulary}\PY{p}{(}\PY{n}{conditions}\PY{p}{,} \PY{n}{encoder\PYZus{}vocab\PYZus{}size}\PY{p}{)}
+            \PY{n}{output\PYZus{}word2id}\PY{p}{,} \PY{n}{output\PYZus{}id2word} \PY{o}{=} \PY{n}{create\PYZus{}vocabulary}\PY{p}{(}\PY{n}{outputs}\PY{p}{,} \PY{n}{decoder\PYZus{}vocab\PYZus{}size}\PY{p}{)}
+            
+            \PY{c+c1}{\PYZsh{} Replace words of condition and ouput with corresponding id in dictonaries}
+            \PY{n}{conditions} \PY{o}{=} \PY{n}{replace\PYZus{}using\PYZus{}dict}\PY{p}{(}\PY{n}{conditions}\PY{p}{,} \PY{n}{condition\PYZus{}word2id}\PY{p}{,} \PY{n}{drop\PYZus{}unknown}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+            \PY{n}{outputs}    \PY{o}{=} \PY{n}{replace\PYZus{}using\PYZus{}dict}\PY{p}{(}\PY{n}{outputs}\PY{p}{,} \PY{n}{output\PYZus{}word2id}\PY{p}{,} \PY{n}{drop\PYZus{}unknown}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+        
+            \PY{c+c1}{\PYZsh{} Fix all sequnces length to a fixed size with padding}
+            \PY{n}{conditions} \PY{o}{=} \PY{n}{pad\PYZus{}with\PYZus{}zero}\PY{p}{(}\PY{n}{conditions}\PY{p}{,} \PY{n}{encoder\PYZus{}seq\PYZus{}length}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{pre}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+            \PY{n}{outputs}    \PY{o}{=} \PY{n}{pad\PYZus{}with\PYZus{}zero}\PY{p}{(}\PY{n}{outputs}\PY{p}{,} \PY{n}{decoder\PYZus{}seq\PYZus{}length}\PY{o}{+}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{post}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+        
+            \PY{c+c1}{\PYZsh{} Split train data into train and validation sets}
+            \PY{n}{conditions\PYZus{}train}\PY{p}{,} \PY{n}{conditions\PYZus{}valid}\PY{p}{,} \PY{n}{outputs\PYZus{}train}\PY{p}{,} \PY{n}{outputs\PYZus{}valid} \PY{o}{=} \PY{n}{train\PYZus{}test\PYZus{}split}\PY{p}{(}\PY{n}{conditions}\PY{p}{,} \PY{n}{outputs}\PY{p}{,} \PY{n}{test\PYZus{}size}\PY{o}{=}\PY{n}{validation\PYZus{}size}\PY{p}{,} \PY{n}{random\PYZus{}state}\PY{o}{=}\PY{l+m+mi}{42}\PY{p}{)}
+        
+            \PY{c+c1}{\PYZsh{} Created a seq2seq Recurrent Neural Network model}
+            \PY{n}{model} \PY{o}{=} \PY{n}{create\PYZus{}seq2seq\PYZus{}model}\PY{p}{(}\PY{n}{encoder\PYZus{}vocab\PYZus{}size}\PY{p}{,} \PY{n}{decoder\PYZus{}vocab\PYZus{}size}\PY{p}{,} \PY{n}{num\PYZus{}latent\PYZus{}dim}\PY{p}{)}
+            \PY{n}{model}\PY{o}{.}\PY{n}{summary}\PY{p}{(}\PY{p}{)}
+            
+            \PY{c+c1}{\PYZsh{} Train the seq2seq model}
+            \PY{n}{model} \PY{o}{=} \PY{n}{train\PYZus{}seq2seq\PYZus{}model}\PY{p}{(}\PY{n}{model}\PY{p}{,} \PY{n}{conditions\PYZus{}train}\PY{p}{,} \PY{n}{conditions\PYZus{}valid}\PY{p}{,} \PY{n}{outputs\PYZus{}train}\PY{p}{,} \PY{n}{outputs\PYZus{}valid}\PY{p}{,} \PY{n}{num\PYZus{}epochs}\PY{p}{)}
+        
+            
+            \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{Trained seq2seq model saved in [}\PY{l+s+si}{\PYZob{}\PYZcb{}}\PY{l+s+s2}{]}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{\PYZdq{}}\PY{o}{.}\PY{n}{format}\PY{p}{(}\PY{n}{MT\PYZus{}SEQ2SEQ\PYZus{}MODEL\PYZus{}PATH}\PY{p}{)}\PY{p}{)}
+            
+        
+        \PY{n}{main}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Using TensorFlow backend.
+
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+Loaded train data set from [./data/MT\_training\_corpus.xlsx]
+
+<BOS>
+<EOS>
+if
+<DGT0>
+<QID1>
+ask
+<DGT1>
+<QID0>
+or
+in
+selected
+at
+only
+to
+routing
+not
+<DGT2>
+<QID2>
+respondent
+show
+a1
+question
+and
+screenout
+is
+coded
+of
+those
+a2
+instructions
+continue
+title
+terminate
+the
+screen
+out
+brand
+for
+us
+respondents
+<DGT3>
+otherwise
+then
+canada
+age
+term
+a
+a3
+end
+–
+below
+a4
+aware
+who
+skip
+above
+select
+years
+least
+answered
+than
+brands
+any
+close
+salad
+punch
+that
+<QID3>
+was
+ordered
+else
+uk
+product
+ne
+q1002–a1
+q1003–a2
+<DGT4>
+old
+qid
+exclude
+a5
+code
+yes
+all
+race
+as
+programmer
+do
+hcp
+q1002–a2
+with
+must
+isn’t
+younger
+answer
+hispanic
+does
+pn
+one
+answers
+client
+page
+did
+hidden
+new
+asked
+drop
+list
+this
+these
+label
+thank
+down
+priority
+ca
+screener
+had
+q1003–a1
+france
+months
+codes
+table
+use
+sample
+on
+used
+from
+advertising
+q42061
+price
+equal
+test
+women
+online
+china
+year
+prescribed
+info
+state
+node
+recommended
+ranch
+have
+latino
+satisfaction
+first
+based
+greater
+no
+(
+)
+
+.
+<BOS>
+<EOS>
+<DGT0>
+any
+<QID1>
+<DGT1>
+,
+<QID0>
+ 
+<DGT2>
+notany
+:
+between
+<QID2>
+or
+<
+>
+\&
+<DGT3>
+answered
+<DGT4>
+notbetween
+q1003
+<QID3>
+all
+<DGT5>
+notanswered
+-
+none
+<DGT6>
+=
+\_
+qd
+q12
+not
+q9712
+q9
+2302b
+<DGT7>
+andqe2
+q99005
+qg1
+orq9712
+/
+<DGT8>
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+Layer (type)                    Output Shape         Param \#     Connected to                     
+==================================================================================================
+encoder\_input (InputLayer)      (None, None, 150)    0                                            
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+decoder\_input (InputLayer)      (None, None, 50)     0                                            
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+encoder\_lstm (LSTM)             [(None, 40), (None,  30560       encoder\_input[0][0]              
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+decoder\_lstm (LSTM)             [(None, None, 40), ( 14560       decoder\_input[0][0]              
+                                                                 encoder\_lstm[0][1]               
+                                                                 encoder\_lstm[0][2]               
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+decoder\_dense (Dense)           (None, None, 50)     2050        decoder\_lstm[0][0]               
+==================================================================================================
+Total params: 47,170
+Trainable params: 47,170
+Non-trainable params: 0
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+Epoch 1/30
+ - 5s - loss: 1.8140 - acc: 0.6131 - val\_loss: 1.0649 - val\_acc: 0.8028
+
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+/home/kamal/.local/lib/python3.6/site-packages/keras/engine/network.py:877: UserWarning: Layer decoder\_lstm was passed non-serializable keyword arguments: \{'initial\_state': [<tf.Tensor 'encoder\_lstm/while/Exit\_2:0' shape=(?, 40) dtype=float32>, <tf.Tensor 'encoder\_lstm/while/Exit\_3:0' shape=(?, 40) dtype=float32>]\}. They will not be included in the serialized model (and thus will be missing at deserialization time).
+  '. They will not be included '
+
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Epoch 2/30
+ - 3s - loss: 0.8291 - acc: 0.8203 - val\_loss: 0.6315 - val\_acc: 0.8708
+Epoch 3/30
+ - 3s - loss: 0.5282 - acc: 0.8772 - val\_loss: 0.6167 - val\_acc: 0.8342
+Epoch 4/30
+ - 2s - loss: 0.3279 - acc: 0.9248 - val\_loss: 0.5624 - val\_acc: 0.8633
+Epoch 5/30
+ - 3s - loss: 0.2477 - acc: 0.9391 - val\_loss: 0.3600 - val\_acc: 0.9103
+Epoch 6/30
+ - 2s - loss: 0.2134 - acc: 0.9479 - val\_loss: 0.3846 - val\_acc: 0.9069
+Epoch 7/30
+ - 2s - loss: 0.1887 - acc: 0.9574 - val\_loss: 0.3148 - val\_acc: 0.9231
+Epoch 8/30
+ - 2s - loss: 0.1212 - acc: 0.9727 - val\_loss: 0.2900 - val\_acc: 0.9164
+Epoch 9/30
+ - 2s - loss: 0.1852 - acc: 0.9595 - val\_loss: 0.2776 - val\_acc: 0.9428
+Epoch 10/30
+ - 3s - loss: 0.1335 - acc: 0.9715 - val\_loss: 0.1501 - val\_acc: 0.9717
+Epoch 11/30
+ - 3s - loss: 0.1251 - acc: 0.9725 - val\_loss: 0.2493 - val\_acc: 0.9319
+Epoch 12/30
+ - 3s - loss: 0.0988 - acc: 0.9778 - val\_loss: 0.3006 - val\_acc: 0.9236
+Epoch 13/30
+ - 2s - loss: 0.1274 - acc: 0.9728 - val\_loss: 0.2258 - val\_acc: 0.9411
+Epoch 14/30
+ - 2s - loss: 0.0810 - acc: 0.9819 - val\_loss: 0.2788 - val\_acc: 0.9364
+Epoch 15/30
+ - 2s - loss: 0.0546 - acc: 0.9876 - val\_loss: 0.2950 - val\_acc: 0.9331
+Epoch 16/30
+ - 3s - loss: 0.0619 - acc: 0.9860 - val\_loss: 0.2219 - val\_acc: 0.9492
+Epoch 17/30
+ - 3s - loss: 0.0430 - acc: 0.9917 - val\_loss: 0.2617 - val\_acc: 0.9389
+Epoch 18/30
+ - 3s - loss: 0.0733 - acc: 0.9819 - val\_loss: 0.2621 - val\_acc: 0.9517
+Epoch 19/30
+ - 3s - loss: 0.0713 - acc: 0.9856 - val\_loss: 0.2120 - val\_acc: 0.9375
+Epoch 20/30
+ - 3s - loss: 0.0561 - acc: 0.9880 - val\_loss: 0.0818 - val\_acc: 0.9747
+Epoch 21/30
+ - 3s - loss: 0.0468 - acc: 0.9899 - val\_loss: 0.0907 - val\_acc: 0.9711
+Epoch 22/30
+ - 3s - loss: 0.0488 - acc: 0.9873 - val\_loss: 0.2066 - val\_acc: 0.9347
+Epoch 23/30
+ - 3s - loss: 0.0439 - acc: 0.9916 - val\_loss: 0.1860 - val\_acc: 0.9553
+Epoch 24/30
+ - 3s - loss: 0.0447 - acc: 0.9902 - val\_loss: 0.2124 - val\_acc: 0.9583
+Epoch 25/30
+ - 3s - loss: 0.0228 - acc: 0.9956 - val\_loss: 0.1573 - val\_acc: 0.9683
+Epoch 26/30
+ - 2s - loss: 0.0277 - acc: 0.9942 - val\_loss: 0.1662 - val\_acc: 0.9669
+Epoch 27/30
+ - 2s - loss: 0.0180 - acc: 0.9966 - val\_loss: 0.2499 - val\_acc: 0.9600
+Epoch 28/30
+ - 3s - loss: 0.0162 - acc: 0.9976 - val\_loss: 0.1107 - val\_acc: 0.9836
+Epoch 29/30
+ - 3s - loss: 0.0186 - acc: 0.9960 - val\_loss: 0.2703 - val\_acc: 0.9456
+Epoch 30/30
+ - 3s - loss: 0.0172 - acc: 0.9970 - val\_loss: 0.1426 - val\_acc: 0.9753
+
+Trained seq2seq model saved in [./model/mt\_seq2seq\_model.h5]
+
+
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}3}]:} \PY{l+s+sd}{\PYZdq{}\PYZdq{}\PYZdq{}}
+        \PY{l+s+sd}{This file reads and preproces the test dataset. Loades a trained seq2seq model}
+        \PY{l+s+sd}{and predict the iput for each sample in test dataset. It writes prediction results}
+        \PY{l+s+sd}{to a file and print to shell}
+        \PY{l+s+sd}{\PYZdq{}\PYZdq{}\PYZdq{}}
+        
+        \PY{c+c1}{\PYZsh{}\PYZsh{}\PYZsh{} Import required packages}
+        \PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}
+        \PY{k+kn}{import} \PY{n+nn}{argparse}
+        \PY{k+kn}{import} \PY{n+nn}{pickle}
+        \PY{k+kn}{import} \PY{n+nn}{os}
+        
+        \PY{k+kn}{from} \PY{n+nn}{tensorflow}\PY{n+nn}{.}\PY{n+nn}{python} \PY{k}{import} \PY{n}{keras}
+        \PY{k+kn}{from} \PY{n+nn}{keras}\PY{n+nn}{.}\PY{n+nn}{models} \PY{k}{import} \PY{n}{load\PYZus{}model}
+        
+        \PY{n}{MT\PYZus{}TEST\PYZus{}CORPUS\PYZus{}PATH}                 \PY{o}{=} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{./data/MT\PYZus{}test\PYZus{}submission.xlsx}\PY{l+s+s2}{\PYZdq{}}
+        \PY{n}{MT\PYZus{}TEST\PYZus{}CORPUS\PYZus{}PATH\PYZus{}WITH\PYZus{}PREDCITION} \PY{o}{=} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{./data/MT\PYZus{}test\PYZus{}submission\PYZus{}with\PYZus{}predcitions.xlsx}\PY{l+s+s2}{\PYZdq{}}
+        
+        \PY{c+c1}{\PYZsh{}\PYZsh{} Import helper functions and constant}
+        
+        \PY{c+c1}{\PYZsh{}\PYZsh{} Specify prediction paramets}
+        \PY{c+c1}{\PYZsh{} Beam serahc paramets to predict the most likely target sequence}
+        \PY{n}{beam\PYZus{}search\PYZus{}max\PYZus{}branch} \PY{o}{=} \PY{l+m+mi}{3} \PY{c+c1}{\PYZsh{} Maximum number of branch at each time step for beam search}
+        \PY{n}{beam\PYZus{}search\PYZus{}max\PYZus{}depth} \PY{o}{=} \PY{l+m+mi}{4}  \PY{c+c1}{\PYZsh{} Maimum sequnce step to branch in beam search}
+        
+        \PY{k}{def} \PY{n+nf}{decode\PYZus{}sequence}\PY{p}{(}\PY{n}{input\PYZus{}seq}\PY{p}{,} \PY{n}{encoder\PYZus{}model}\PY{p}{,} \PY{n}{decoder\PYZus{}model}\PY{p}{,} \PY{n}{word2id}\PY{p}{,} \PY{n}{id2word}\PY{p}{)}\PY{p}{:}
+            \PY{l+s+sd}{\PYZdq{}\PYZdq{}\PYZdq{}}
+        \PY{l+s+sd}{    \PYZdq{}\PYZdq{}\PYZdq{}}
+            \PY{c+c1}{\PYZsh{} Encode the input as state vectors.}
+            \PY{n}{encoder\PYZus{}input} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{zeros}\PY{p}{(}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{n+nb}{len}\PY{p}{(}\PY{n}{input\PYZus{}seq}\PY{p}{)}\PY{p}{,} \PY{n}{encoder\PYZus{}vocab\PYZus{}size}\PY{p}{)}\PY{p}{)}
+            \PY{k}{for} \PY{n}{t}\PY{p}{,} \PY{n}{word\PYZus{}id} \PY{o+ow}{in} \PY{n+nb}{enumerate}\PY{p}{(}\PY{n}{input\PYZus{}seq}\PY{p}{)}\PY{p}{:}
+                \PY{n}{encoder\PYZus{}input}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{,} \PY{n}{t}\PY{p}{,} \PY{n}{word\PYZus{}id}\PY{p}{]} \PY{o}{=} \PY{l+m+mi}{1}
+        
+            \PY{n}{states\PYZus{}value} \PY{o}{=} \PY{n}{encoder\PYZus{}model}\PY{o}{.}\PY{n}{predict}\PY{p}{(}\PY{p}{[}\PY{n}{encoder\PYZus{}input}\PY{p}{]}\PY{p}{)}
+            \PY{c+c1}{\PYZsh{} Generate empty target sequence of length 1.}
+            \PY{n}{decoder\PYZus{}input} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{zeros}\PY{p}{(}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{,} \PY{n}{decoder\PYZus{}vocab\PYZus{}size}\PY{p}{)}\PY{p}{)}
+            \PY{c+c1}{\PYZsh{} Populate the first character of target sequence with the start character.}
+            \PY{n}{decoder\PYZus{}input}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{,} \PY{n}{word2id}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZlt{}BOS\PYZgt{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{p}{]} \PY{o}{=} \PY{l+m+mi}{1} 
+            \PY{n}{seq\PYZus{}length} \PY{o}{=} \PY{l+m+mi}{0}
+            \PY{n}{sampled\PYZus{}seq}\PY{p}{,} \PY{n}{sampled\PYZus{}seq\PYZus{}prob}\PY{p}{,} \PY{n}{sampled\PYZus{}seq\PYZus{}length} \PY{o}{=} \PY{n}{decode\PYZus{}sequence\PYZus{}beam}\PY{p}{(}\PY{n}{decoder\PYZus{}model}\PY{p}{,} \PY{n}{decoder\PYZus{}input}\PY{p}{,} \PY{n}{states\PYZus{}value}\PY{p}{,} \PY{n}{word2id}\PY{p}{,} \PY{n}{seq\PYZus{}length}\PY{p}{)}
+            
+            \PY{k}{return} \PY{n}{sampled\PYZus{}seq}\PY{p}{,} \PY{n}{sampled\PYZus{}seq\PYZus{}prob}
+        
+        \PY{k}{def} \PY{n+nf}{decode\PYZus{}sequence\PYZus{}beam}\PY{p}{(}\PY{n}{decoder\PYZus{}model}\PY{p}{,} \PY{n}{decoder\PYZus{}input}\PY{p}{,} \PY{n}{states\PYZus{}value}\PY{p}{,} \PY{n}{word2id}\PY{p}{,} \PY{n}{seq\PYZus{}length}\PY{p}{)}\PY{p}{:}
+            
+            \PY{n}{output\PYZus{}tokens}\PY{p}{,} \PY{n}{h}\PY{p}{,} \PY{n}{c} \PY{o}{=} \PY{n}{decoder\PYZus{}model}\PY{o}{.}\PY{n}{predict}\PY{p}{(}\PY{p}{[}\PY{n}{decoder\PYZus{}input}\PY{p}{]} \PY{o}{+} \PY{n}{states\PYZus{}value}\PY{p}{)}
+            \PY{n}{states\PYZus{}value} \PY{o}{=} \PY{p}{[}\PY{n}{h}\PY{p}{,} \PY{n}{c}\PY{p}{]}
+            
+            \PY{n}{seq\PYZus{}length} \PY{o}{+}\PY{o}{=} \PY{l+m+mi}{1}
+            \PY{c+c1}{\PYZsh{} Sample a token}
+            \PY{k}{if} \PY{n}{seq\PYZus{}length} \PY{o}{\PYZlt{}} \PY{n}{beam\PYZus{}search\PYZus{}max\PYZus{}depth}\PY{p}{:}
+                \PY{n}{number\PYZus{}search\PYZus{}branch} \PY{o}{=} \PY{n}{beam\PYZus{}search\PYZus{}max\PYZus{}branch}
+            \PY{k}{else}\PY{p}{:}
+                \PY{n}{number\PYZus{}search\PYZus{}branch} \PY{o}{=} \PY{l+m+mi}{1}
+            
+            \PY{n}{beam\PYZus{}top\PYZus{}token\PYZus{}indecies} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{argsort}\PY{p}{(}\PY{n}{output\PYZus{}tokens}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{,} \PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{,} \PY{p}{:}\PY{p}{]}\PY{p}{)}\PY{p}{[}\PY{o}{\PYZhy{}}\PY{n}{number\PYZus{}search\PYZus{}branch}\PY{p}{:}\PY{p}{]}
+            \PY{n}{sampled\PYZus{}seq\PYZus{}list} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+            \PY{n}{sampled\PYZus{}seq\PYZus{}prob\PYZus{}list} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+            \PY{n}{sampled\PYZus{}seq\PYZus{}length\PYZus{}list} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+            \PY{k}{for} \PY{n}{beam} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{number\PYZus{}search\PYZus{}branch}\PY{p}{)}\PY{p}{:}
+                \PY{n}{sampled\PYZus{}token\PYZus{}index} \PY{o}{=} \PY{n}{beam\PYZus{}top\PYZus{}token\PYZus{}indecies}\PY{p}{[}\PY{n}{beam}\PY{p}{]}
+                \PY{n}{sampled\PYZus{}token\PYZus{}prob}  \PY{o}{=} \PY{n}{output\PYZus{}tokens}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{,} \PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{,} \PY{n}{sampled\PYZus{}token\PYZus{}index}\PY{p}{]}
+                \PY{k}{if} \PY{n}{sampled\PYZus{}token\PYZus{}index} \PY{o}{==} \PY{n}{word2id}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZlt{}EOS\PYZgt{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o+ow}{or} \PY{n}{seq\PYZus{}length} \PY{o}{==} \PY{n}{decoder\PYZus{}seq\PYZus{}length}\PY{p}{:}
+                    \PY{k}{return} \PY{p}{[}\PY{n}{sampled\PYZus{}token\PYZus{}index}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{,} \PY{n}{sampled\PYZus{}token\PYZus{}prob}\PY{p}{,} \PY{l+m+mf}{0.00000001}
+                \PY{k}{else}\PY{p}{:}
+                    \PY{c+c1}{\PYZsh{} Update the target sequence (of length 1).}
+                    \PY{n}{decoder\PYZus{}input} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{zeros}\PY{p}{(}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{,} \PY{n}{decoder\PYZus{}vocab\PYZus{}size}\PY{p}{)}\PY{p}{)}
+                    \PY{n}{decoder\PYZus{}input}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{,} \PY{n}{sampled\PYZus{}token\PYZus{}index}\PY{p}{]} \PY{o}{=} \PY{l+m+mi}{1}
+                    \PY{c+c1}{\PYZsh{} Update states}
+                    \PY{n}{sampled\PYZus{}seq}\PY{p}{,} \PY{n}{sampled\PYZus{}seq\PYZus{}prob}\PY{p}{,} \PY{n}{sampled\PYZus{}seq\PYZus{}length} \PY{o}{=} \PY{n}{decode\PYZus{}sequence\PYZus{}beam}\PY{p}{(}\PY{n}{decoder\PYZus{}model}\PY{p}{,} \PY{n}{decoder\PYZus{}input}\PY{p}{,} \PY{n}{states\PYZus{}value}\PY{p}{,} \PY{n}{word2id}\PY{p}{,} \PY{n}{seq\PYZus{}length}\PY{p}{)}
+                    \PY{n}{sampled\PYZus{}seq}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{sampled\PYZus{}token\PYZus{}index}\PY{p}{)}
+                    \PY{n}{sampled\PYZus{}seq\PYZus{}prob} \PY{o}{*}\PY{o}{=} \PY{n}{sampled\PYZus{}token\PYZus{}prob}
+                    
+                    \PY{n}{sampled\PYZus{}seq\PYZus{}list}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{sampled\PYZus{}seq}\PY{p}{)}
+                    \PY{n}{sampled\PYZus{}seq\PYZus{}prob\PYZus{}list}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{sampled\PYZus{}seq\PYZus{}prob}\PY{p}{)}
+                    \PY{n}{sampled\PYZus{}seq\PYZus{}length\PYZus{}list}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{sampled\PYZus{}seq\PYZus{}length}\PY{p}{)}
+            
+            \PY{n}{weighted\PYZus{}prob} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{log}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{n}{sampled\PYZus{}seq\PYZus{}prob\PYZus{}list}\PY{p}{)}\PY{p}{)}\PY{o}{/}\PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{n}{sampled\PYZus{}seq\PYZus{}length\PYZus{}list}\PY{p}{)}
+            
+            \PY{n}{best\PYZus{}beam} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{argmax}\PY{p}{(}\PY{n}{weighted\PYZus{}prob}\PY{p}{)}
+            
+            \PY{k}{return} \PY{n}{sampled\PYZus{}seq\PYZus{}list}\PY{p}{[}\PY{n}{best\PYZus{}beam}\PY{p}{]}\PY{p}{,} \PY{n}{sampled\PYZus{}seq\PYZus{}prob\PYZus{}list}\PY{p}{[}\PY{n}{best\PYZus{}beam}\PY{p}{]}\PY{p}{,} \PY{n}{sampled\PYZus{}seq\PYZus{}length\PYZus{}list}\PY{p}{[}\PY{n}{best\PYZus{}beam}\PY{p}{]}\PY{o}{+}\PY{l+m+mi}{1}
+        
+        
+        
+        
+        \PY{k}{def} \PY{n+nf}{main}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+        
+            \PY{c+c1}{\PYZsh{} construct the argument parser and parse the arguments}
+            \PY{n}{test\PYZus{}data\PYZus{}path} \PY{o}{=} \PY{n}{MT\PYZus{}TEST\PYZus{}CORPUS\PYZus{}PATH}
+            \PY{n}{test\PYZus{}data\PYZus{}output\PYZus{}path} \PY{o}{=} \PY{n}{MT\PYZus{}TEST\PYZus{}CORPUS\PYZus{}PATH\PYZus{}WITH\PYZus{}PREDCITION}
+        
+            \PY{c+c1}{\PYZsh{} Load model and metadata}
+            \PY{n}{model} \PY{o}{=} \PY{n}{load\PYZus{}model}\PY{p}{(}\PY{n}{MT\PYZus{}SEQ2SEQ\PYZus{}MODEL\PYZus{}PATH}\PY{p}{)}
+        
+            \PY{k}{with} \PY{n+nb}{open}\PY{p}{(}\PY{n}{MT\PYZus{}META\PYZus{}DATA\PYZus{}FILE\PYZus{}PATH}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{rb}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)} \PY{k}{as} \PY{n}{f}\PY{p}{:}
+                \PY{p}{[}\PY{n}{condition\PYZus{}word2id}\PY{p}{,} \PY{n}{condition\PYZus{}id2word}\PY{p}{,} \PY{n}{output\PYZus{}word2id}\PY{p}{,} \PY{n}{output\PYZus{}id2word}\PY{p}{]} \PY{o}{=} \PY{n}{pickle}\PY{o}{.}\PY{n}{load}\PY{p}{(}\PY{n}{f}\PY{p}{)}
+        
+            \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{Loaded a trained seq2seq model from [}\PY{l+s+si}{\PYZob{}\PYZcb{}}\PY{l+s+s2}{]}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{\PYZdq{}}\PY{o}{.}\PY{n}{format}\PY{p}{(}\PY{n}{MT\PYZus{}SEQ2SEQ\PYZus{}MODEL\PYZus{}PATH}\PY{p}{)}\PY{p}{)}
+        
+            \PY{n}{encoder\PYZus{}model}\PY{p}{,} \PY{n}{decoder\PYZus{}model} \PY{o}{=} \PY{n}{create\PYZus{}seq2seq\PYZus{}inference\PYZus{}model}\PY{p}{(}\PY{n}{model}\PY{p}{,} \PY{n}{num\PYZus{}latent\PYZus{}dim}\PY{p}{)}
+            
+            \PY{c+c1}{\PYZsh{}test\PYZus{}data\PYZus{}path = MT\PYZus{}TRAINING\PYZus{}CORPUS\PYZus{}PATH}
+            
+            \PY{c+c1}{\PYZsh{}Read dataset from Excel file}
+            \PY{n}{qids\PYZus{}raw}\PY{p}{,} \PY{n}{conditions\PYZus{}raw}\PY{p}{,} \PY{n}{output\PYZus{}raw} \PY{o}{=} \PY{n}{read\PYZus{}data}\PY{p}{(}\PY{n}{test\PYZus{}data\PYZus{}path}\PY{p}{)}
+            \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{Loaded test dataset from [}\PY{l+s+si}{\PYZob{}\PYZcb{}}\PY{l+s+s2}{]}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{\PYZdq{}}\PY{o}{.}\PY{n}{format}\PY{p}{(}\PY{n}{test\PYZus{}data\PYZus{}path}\PY{p}{)}\PY{p}{)}
+        
+            \PY{c+c1}{\PYZsh{} Preprocess the raw input text data}
+            \PY{n}{\PYZus{}}\PY{p}{,} \PY{n}{conditions}\PY{p}{,} \PY{n}{\PYZus{}}\PY{p}{,} \PY{n}{dictionaries\PYZus{}lemanization} \PY{o}{=} \PY{n}{prepare\PYZus{}data}\PY{p}{(}\PY{n}{qids\PYZus{}raw}\PY{p}{,} \PY{n}{conditions\PYZus{}raw}\PY{p}{,} \PY{n}{output\PYZus{}raw}\PY{p}{)}
+            
+            \PY{c+c1}{\PYZsh{} Replace words of qid, condition and ouput with corresponding id in dictonaries}
+            \PY{n}{conditions} \PY{o}{=} \PY{n}{replace\PYZus{}using\PYZus{}dict}\PY{p}{(}\PY{n}{conditions}\PY{p}{,} \PY{n}{condition\PYZus{}word2id}\PY{p}{,} \PY{n}{drop\PYZus{}unknown}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+        
+            \PY{c+c1}{\PYZsh{} Fix all sequnces length to a fixed size with padding}
+            \PY{n}{conditions} \PY{o}{=} \PY{n}{pad\PYZus{}with\PYZus{}zero}\PY{p}{(}\PY{n}{conditions}\PY{p}{,} \PY{n}{encoder\PYZus{}seq\PYZus{}length}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{pre}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+        
+            \PY{n}{outputs\PYZus{}predcited} \PY{o}{=} \PY{p}{[}\PY{k+kc}{None} \PY{k}{for} \PY{n}{\PYZus{}} \PY{o+ow}{in} \PY{n}{conditions}\PY{p}{]}
+            \PY{k}{for} \PY{n}{sample\PYZus{}index}\PY{p}{,} \PY{n}{condition} \PY{o+ow}{in} \PY{n+nb}{enumerate}\PY{p}{(}\PY{n}{conditions}\PY{p}{)}\PY{p}{:}
+        
+                \PY{n}{input\PYZus{}seq} \PY{o}{=} \PY{n}{condition}
+                \PY{n}{decoded\PYZus{}seqeunce}\PY{p}{,} \PY{n}{\PYZus{}} \PY{o}{=} \PY{n}{decode\PYZus{}sequence}\PY{p}{(}\PY{n}{input\PYZus{}seq}\PY{p}{,} \PY{n}{encoder\PYZus{}model}\PY{p}{,} \PY{n}{decoder\PYZus{}model}\PY{p}{,} \PY{n}{output\PYZus{}word2id}\PY{p}{,} \PY{n}{output\PYZus{}id2word}\PY{p}{)}
+                
+                \PY{n}{decoded\PYZus{}seqeunce} \PY{o}{=} \PY{n}{replace\PYZus{}using\PYZus{}dict}\PY{p}{(}\PY{p}{[}\PY{n}{decoded\PYZus{}seqeunce}\PY{p}{]}\PY{p}{,} \PY{n}{output\PYZus{}id2word}\PY{p}{)}
+                \PY{n}{decoded\PYZus{}seqeunce} \PY{o}{=} \PY{n}{replace\PYZus{}using\PYZus{}dict}\PY{p}{(}\PY{n}{decoded\PYZus{}seqeunce}\PY{p}{,} \PY{n}{dictionaries\PYZus{}lemanization}\PY{p}{[}\PY{n}{sample\PYZus{}index}\PY{p}{]}\PY{p}{)}
+        
+                \PY{n}{decoded\PYZus{}seqeunce} \PY{o}{=} \PY{p}{[}\PY{n}{seq} \PY{k}{for} \PY{n}{seq} \PY{o+ow}{in} \PY{n}{decoded\PYZus{}seqeunce}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]} \PY{k}{if} \PY{n}{seq} \PY{o}{!=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZlt{}PAD\PYZgt{}}\PY{l+s+s1}{\PYZsq{}} \PY{o+ow}{and} \PY{n}{seq} \PY{o}{!=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZlt{}EOS\PYZgt{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+                \PY{n}{decoded\PYZus{}seqeunce} \PY{o}{=} \PY{n+nb}{reversed}\PY{p}{(}\PY{n}{decoded\PYZus{}seqeunce}\PY{p}{)}
+                \PY{n}{decoded\PYZus{}seqeunce} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZsq{}}\PY{o}{.}\PY{n}{join}\PY{p}{(}\PY{n}{decoded\PYZus{}seqeunce}\PY{p}{)}
+        
+                \PY{n}{outputs\PYZus{}predcited}\PY{p}{[}\PY{n}{sample\PYZus{}index}\PY{p}{]} \PY{o}{=} \PY{n}{decoded\PYZus{}seqeunce}
+        
+                \PY{k}{if} \PY{n}{sample\PYZus{}index} \PY{o}{\PYZpc{}} \PY{l+m+mi}{10} \PY{o}{==} \PY{l+m+mi}{0}\PY{p}{:}
+                    \PY{n}{log\PYZus{}to\PYZus{}shell}\PY{p}{(}\PY{n}{sample\PYZus{}index}\PY{p}{,} \PY{n}{qids\PYZus{}raw}\PY{p}{[}\PY{n}{sample\PYZus{}index}\PY{p}{]}\PY{p}{,}
+                                   \PY{n}{conditions\PYZus{}raw}\PY{p}{[}\PY{n}{sample\PYZus{}index}\PY{p}{]}\PY{p}{,} \PY{n}{output\PYZus{}raw}\PY{p}{[}\PY{n}{sample\PYZus{}index}\PY{p}{]}\PY{p}{,}
+                                   \PY{n}{decoded\PYZus{}seqeunce} \PY{p}{)}
+                
+            \PY{n}{write\PYZus{}data}\PY{p}{(}\PY{n}{qids\PYZus{}raw}\PY{p}{,} \PY{n}{conditions\PYZus{}raw}\PY{p}{,} \PY{n}{outputs\PYZus{}predcited}\PY{p}{,} \PY{n}{test\PYZus{}data\PYZus{}output\PYZus{}path}\PY{p}{)}
+            \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{Saved predictions to [}\PY{l+s+si}{\PYZob{}\PYZcb{}}\PY{l+s+s2}{]}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{\PYZdq{}}\PY{o}{.}\PY{n}{format}\PY{p}{(}\PY{n}{test\PYZus{}data\PYZus{}output\PYZus{}path}\PY{p}{)}\PY{p}{)}
+        
+        
+        \PY{n}{main}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+Loaded a trained seq2seq model from [./model/mt\_seq2seq\_model.h5]
+
+
+Loaded test dataset from [./data/MT\_test\_submission.xlsx]
+
+Sample index 0
+QID:  1010
+CONDITION:  Terminate if respondent selected ‘A4’ for all 3 product types
+OUTPUT:  nan 
+
+Predicted OUTPUT:  1010.any(3) 
+
+
+Sample index 10
+QID:  Q16A,QD
+CONDITION:  ASK ONLY IF QD = 1-4 (ORDERED ANY TEST SALAD)
+OUTPUT:  nan 
+
+Predicted OUTPUT:  qd.between(1:4) 
+
+
+Sample index 20
+QID:  QR8,Q30,QR7
+CONDITION:  ASK IF Q30=1 AND QR7=1-4
+OUTPUT:  nan 
+
+Predicted OUTPUT:  qr7.any(1)\&qr7.any(1) 
+
+
+Sample index 30
+QID:  8014
+CONDITION:  END Younger than 18 years
+OUTPUT:  nan 
+
+Predicted OUTPUT:  8014<18 
+
+
+Sample index 40
+QID:  Q26B,QE2
+CONDITION:  ASK ONLY IF QE2=1
+OUTPUT:  nan 
+
+Predicted OUTPUT:  qe2.any(1) 
+
+
+Sample index 50
+QID:  Q3,Q2
+CONDITION:  ASK IF Q2=1
+OUTPUT:  nan 
+
+Predicted OUTPUT:  q2.any(1) 
+
+
+Sample index 60
+QID:  Q17b,QD
+CONDITION:  ASK ONLY IF QD = 1 (ORDERED BIG TEX TACO SALAD)
+OUTPUT:  nan 
+
+Predicted OUTPUT:  qd.any(1) 
+
+
+Sample index 70
+QID:  8000
+CONDITION:  Screen out if NOT 2
+OUTPUT:  nan 
+
+Predicted OUTPUT:  8000.notany(2) 
+
+
+Sample index 80
+QID:  Q25B,QE2
+CONDITION:  ASK ONLY IF QE2=1
+OUTPUT:  nan 
+
+Predicted OUTPUT:  qe2.any(1) 
+
+
+Sample index 90
+QID:  22015,22011
+CONDITION:  ASK IF CODED 2 AT 22011 
+OUTPUT:  nan 
+
+Predicted OUTPUT:  22011.any(2) 
+
+
+Sample index 100
+QID:  Q3A,QA
+CONDITION:  ASK IF QA = 1 (WOMEN)
+OUTPUT:  nan 
+
+Predicted OUTPUT:  qa.any(1) 
+
+
+Sample index 110
+QID:  6223,Q6215
+CONDITION:  Instructions: only show if HCP prescribed or recommended one brand = Q6215 A1 OR A2
+OUTPUT:  nan 
+
+Predicted OUTPUT:  q6215.any(<DGT0>) 
+
+
+Sample index 120
+QID:  Q4654,Q4200
+CONDITION:  ROUTING IF: respondent answers 2 @q4200
+OUTPUT:  nan 
+
+Predicted OUTPUT:  q4200.any(2) 
+
+
+Sample index 130
+QID:  1011,1010
+CONDITION:  Ask this question only to those select ‘A2’ or ‘A4’ for ALL product types at 1010
+OUTPUT:  nan 
+
+Predicted OUTPUT:  1010.any(<DGT0>) 
+
+
+Sample index 140
+QID:  20043,20033
+CONDITION:  ROUTING: A1/A2/A3/A4/A5 IN 20033
+OUTPUT:  nan 
+
+Predicted OUTPUT:  20033.any(<DGT0>,<DGT1>,<DGT2>) 
+
+
+Sample index 150
+QID:  Q25C,Q25B
+CONDITION:  ASK ONLY IF Q25B=1 
+OUTPUT:  nan 
+
+Predicted OUTPUT:  q25b.any(1) 
+
+
+Sample index 160
+QID:  Q306,Q305
+CONDITION:  Q306 IF NOT 6 IN Q305
+OUTPUT:  nan 
+
+Predicted OUTPUT:  q305.notany(6) 
+
+
+Sample index 170
+QID:  D14,D13,D15
+CONDITION:  [PN : IF D13=99, GO TO D15]
+OUTPUT:  nan 
+
+Predicted OUTPUT:  d15.any(99) 
+
+
+Sample index 180
+QID:  41962,4006
+CONDITION:  Ask to those coded 2 in 4006
+OUTPUT:  nan 
+
+Predicted OUTPUT:  4006.any(2) 
+
+
+Sample index 190
+QID:  QD
+CONDITION:  QUESTION : DROP DOWN LIST IF QD = 52
+OUTPUT:  nan 
+
+Predicted OUTPUT:  qd.any(52) 
+
+
+Sample index 200
+QID:  Q226,Q225
+CONDITION:  ASK Q226 IF NOT 5 IN Q225
+OUTPUT:  nan 
+
+Predicted OUTPUT:  q225.notany(5) 
+
+
+Sample index 210
+QID:  Q1004
+CONDITION:  Screenout if respondent is an experienced mum: Q1004 A2
+OUTPUT:  nan 
+
+Predicted OUTPUT:  q1004.any(<DGT0>) 
+
+
+Sample index 220
+QID:  QF1,QA1
+CONDITION:  ASK IF QA1 = 2 ( FRANCE ) IF QF1 = 1
+OUTPUT:  nan 
+
+Predicted OUTPUT:  qa1.any(2) 
+
+
+Sample index 230
+QID:  Q1011
+CONDITION:  Screenout if not started in past three months: If not Q1011 A1 OR A2 OR A3 OR A4
+OUTPUT:  nan 
+
+Predicted OUTPUT:  q1011.notany(<DGT0>,<DGT1>) 
+
+
+Sample index 240
+QID:  3006,30041
+CONDITION:  SHOW IF  Q30041=1 or 2
+OUTPUT:  nan 
+
+Predicted OUTPUT:  30041.any(1,2) 
+
+
+Sample index 250
+QID:  Q58a,Q57
+CONDITION:  ASK Q58a IF 1 SELECTED IN Q57.
+OUTPUT:  nan 
+
+Predicted OUTPUT:  q57.any(1) 
+
+
+Sample index 260
+QID:  Q12,Q8
+CONDITION:  ASK Q12 IF AT LEAST ONE ANSWER AT Q8
+OUTPUT:  nan 
+
+Predicted OUTPUT:  q8.answered() 
+
+
+Sample index 270
+QID:  Q4a,Q1,Q2,Q4
+CONDITION:  ASK Q4a IF DID NOT SELECT 7 AT Q1 AND Q2 OR 1 SELECTED AT Q4
+OUTPUT:  nan 
+
+Predicted OUTPUT:  q1.notany(7)or q2.between.between(1 
+
+
+Sample index 280
+QID:  Question2
+CONDITION:  Screenout if Age DOES NOT EQUAL 18-75
+OUTPUT:  nan 
+
+Predicted OUTPUT:  question2.notbetween(18:75) 
+
+
+Sample index 290
+QID:  Q.CR
+CONDITION:  PROGRAMMER:  RESPONDENT MUST BE QCR -1 OR -2 TO CONTINUE. DO NOT TERM RESPONDENT.  ALLOW PROGRAM TO CONTINUE.
+OUTPUT:  nan 
+
+Predicted OUTPUT:  q.between(1:2) 
+
+
+Sample index 300
+QID:  8010
+CONDITION:  SCREEN OUT (under 18 and above 65)
+OUTPUT:  nan 
+
+Predicted OUTPUT:  8010.notany(18) 
+
+
+Sample index 310
+QID:  Q4,Q2
+CONDITION:  ASK Q4 IF 7 NOT SELECTED AT Q2
+OUTPUT:  nan 
+
+Predicted OUTPUT:  q2.notany(7) 
+
+
+Sample index 320
+QID:  Q54,Q53
+CONDITION:  ASK IF Q53=2
+OUTPUT:  nan 
+
+Predicted OUTPUT:  q53.any(2) 
+
+
+Sample index 330
+QID:  S2
+CONDITION:  Exclude IF AGE<18 OR >55
+OUTPUT:  nan 
+
+Predicted OUTPUT:  s2 <18 or s2>55 
+
+
+Sample index 340
+QID:  1023,1300,1301
+CONDITION:  SOCCER LOVER IF SELECTED 4 or 5 at 1300 OR 1 or 2 at 1301
+OUTPUT:  nan 
+
+Predicted OUTPUT:  1300.any(4,5,1) 
+
+
+Sample index 350
+QID:  4056,4055
+CONDITION:  Ask  4056 if 1 at 4055
+OUTPUT:  nan 
+
+Predicted OUTPUT:  4055.any(1) 
+
+
+Sample index 360
+QID:  Q17A,QD
+CONDITION:  ASK ONLY IF QD = 1 
+OUTPUT:  nan 
+
+Predicted OUTPUT:  qd.any(1) 
+
+
+Sample index 370
+QID:  QG2,QG1
+CONDITION:  ASK QG2 IF QG1 = 1
+OUTPUT:  nan 
+
+Predicted OUTPUT:  qg1.any(1) 
+
+
+Sample index 380
+QID:  Q1710
+CONDITION:  ROUTING IF: respondent is aware of advertising of Heineken (Q1700=A1)
+OUTPUT:  nan 
+
+Predicted OUTPUT:  .any(<DGT0>) 
+
+
+Sample index 390
+QID:  Q1711,Q1700
+CONDITION:  ROUTING IF: respondent can (partially) remember what Samsung wanted to make clear(Q1710=A1/A2)
+OUTPUT:  nan 
+
+Predicted OUTPUT:  .any(<DGT0>,<DGT1>) 
+
+
+Sample index 400
+QID:  2205,22017
+CONDITION:  Ask if coded 1 in 22017
+OUTPUT:  nan 
+
+Predicted OUTPUT:  22017.any(1) 
+
+
+Sample index 410
+QID:  8010
+CONDITION:  [Screen out if younger than 18 OR 64 or older]
+OUTPUT:  nan 
+
+Predicted OUTPUT:  8010<18 or 8010>64 
+
+
+Sample index 420
+QID:  Q1014,Q1002,Q1003
+CONDITION:  ROUTING: Q1002–A1 OR Q1003–A2
+OUTPUT:  nan 
+
+Predicted OUTPUT:  q1002.any(<DGT0>)or q1003.any(<DGT1>) 
+
+
+Sample index 430
+QID:  S7
+CONDITION:  Terminate at end of screener if <75\%
+OUTPUT:  nan 
+
+Predicted OUTPUT:  s7.any(75) 
+
+
+Sample index 440
+QID:  Q80:Q82,Q79
+CONDITION:  ASK Q80 TO Q82 IF 2 OR 3 AT Q79
+OUTPUT:  nan 
+
+Predicted OUTPUT:  q82.any(2,3) 
+
+
+Sample index 450
+QID:  8012
+CONDITION:  Younger than 18 years Screen out
+OUTPUT:  nan 
+
+Predicted OUTPUT:  8012<18 
+
+
+Sample index 460
+QID:  QC,QA1
+CONDITION:  ASK IF QA1 = 1 OR 2 (US/CANADA)
+OUTPUT:  nan 
+
+Predicted OUTPUT:  qa1.any(1,2) 
+
+
+Sample index 470
+QID:  QA2,QA1
+CONDITION:  ASK IF QA1 = 2 . PROGRAMMER : CONTINUE REMAINDER OF QUESTIONNAIRE IN THE SELECTED LANGUAGE .
+OUTPUT:  nan 
+
+Predicted OUTPUT:  <QID2>.any(2) 
+
+
+Sample index 480
+QID:  1009,Q1008
+CONDITION:  Ask only to those who selected 1 in Q1008
+OUTPUT:  nan 
+
+Predicted OUTPUT:  q1008.any(1) 
+
+
+Sample index 490
+QID:  QD,QA1
+CONDITION:  ASK IF QA1 = 1
+OUTPUT:  nan 
+
+Predicted OUTPUT:  qa1.any(1) 
+
+
+Sample index 500
+QID:  3302,Q3260
+CONDITION:  IF Q3260, A2
+OUTPUT:  nan 
+
+Predicted OUTPUT:  q3260.any(<DGT0>) 
+
+
+Sample index 510
+QID:  Q100103,Q1002,Q1003
+CONDITION:  ROUTING: Q1002–A1 OR Q1003–A2
+OUTPUT:  nan 
+
+Predicted OUTPUT:  q1002.any(<DGT0>)or q1003.any(<DGT1>) 
+
+
+Sample index 520
+QID:  1008
+CONDITION:  IF RESPONDENT DOES NOT USE THESE SERVICES CODE 7 IN 1008  Thank \& End
+OUTPUT:  nan 
+
+Predicted OUTPUT:  1008.notany(7) 
+
+
+Sample index 530
+QID:  4052a,40522
+CONDITION:  Ask 4052a if 40522 = 4 or 5
+OUTPUT:  nan 
+
+Predicted OUTPUT:  40522.any(4,5) 
+
+
+Sample index 540
+QID:  1012,Q1002
+CONDITION:  IF BOUGHT IPL (Q1002, A2)
+OUTPUT:  nan 
+
+Predicted OUTPUT:  q1002.any(<DGT0>) 
+
+
+Sample index 550
+QID:  S5
+CONDITION:  IF <2 OR >35 TERMINATE
+OUTPUT:  nan 
+
+Predicted OUTPUT:  s5.any(2,35) 
+
+
+Sample index 560
+QID:  Q5552,Q1002,Q1004
+CONDITION:  ROUTING: Q1002–A2 OR Q1003–A1
+OUTPUT:  nan 
+
+Predicted OUTPUT:  q1002.any(<DGT0>)or q1003.any(<DGT1>) 
+
+
+Sample index 570
+QID:  Q585801,Q1002,Q1008
+CONDITION:  ROUTING: Q1002–A2 OR Q1003–A1
+OUTPUT:  nan 
+
+Predicted OUTPUT:  q1002.any(<DGT0>)or q1003.any(<DGT1>) 
+
+
+Sample index 580
+QID:  Q5
+CONDITION:  ROUTING IF: respondent has used at least 1 product
+OUTPUT:  nan 
+
+Predicted OUTPUT:  q5.notanswered(1) 
+
+
+
+Saved predictions to [./data/MT\_test\_submission\_with\_predcitions.xlsx]
+
+
+    \end{Verbatim}
+
+
+    % Add a bibliography block to the postdoc
+    
+    
+    
+    \end{document}

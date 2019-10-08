@@ -1,11 +1,15 @@
-
-""""
-This file reads and preproces the train dataset and creates (and traind) a seq2seq model
-using Recurrent Neurak Networks to predict the output sequnce from input sequnce.
+"""" train.py
+This file reads and preproces the train dataset and creates (and trains) a seq2seq model
+using Recurrent Neurak Networks to predict a target sequnce from an input sequnce.
 openpyxl
 xlrd
+numpy
+tensorflow
+pandas
+sklearn
 """
 
+### Import required packages
 import numpy as np
 import random
 import argparse
@@ -19,33 +23,43 @@ from keras.layers import Embedding, LSTM, Dense, Activation, Dropout, TimeDistri
 from keras.callbacks import ModelCheckpoint
 from keras import backend as K
 
+## Import helper functions
 from sklearn.model_selection import train_test_split
 
 from tools import read_data, prepare_data, create_vocabulary, replace_using_dict, pad_with_zero
 
+## Define default training data path
+MT_TRAINING_CORPUS_PATH  = "./data/MT_training_corpus.xlsx"
 
-MT_TRAINING_CORPUS_PATH = "./data/MT_training_corpus.xlsx"
-
+## Specify path to save model and metadata
 MT_SEQ2SEQ_MODEL_PATH    = "./model/mt_seq2seq_model.h5"
 MT_MODEL_CHECKPOINT_PATH = "./model/model.chpt"
 MT_META_DATA_FILE_PATH   = "./model/metadata.pickle"
 
+## Define model parameter
+# Encoder and Decoder maximum vocabulary size
 encoder_vocab_size = 150
 decoder_vocab_size = 50
 
+# Encoder and Decoder sequnces length
 encoder_seq_length = 20
 decoder_seq_length = 15
 
+# Number of training epcohs
 num_epochs = 30
 
+# Training Batch size
 batch_size = 20
+
+# Number of LSTM latend dimention in both Encoder and Decoder
 num_latent_dim = 40
 
+# Fraction of data used for validation during training the model
 validation_size = 0.1
 
 
 def data_generator(X, y, batch_size):
-    """ Creates a datagenrator to feed encoder and decoder input sequnces and decoder
+    """ Creates a data genrator to feed encoder and decoder input sequnces and decoder
     target sequnce
     Args:
         X: input sequnces
@@ -66,20 +80,18 @@ def data_generator(X, y, batch_size):
                     if t < decoder_seq_length:
                         decoder_input_sequnce[i, t, word] = 1 # decoder input seq
                     if t>0:
-                        # decoder target sequence (one hot encoded)
-                        decoder_target_sequnce[i, t-1, word] = 1
+                        decoder_target_sequnce[i, t-1, word] = 1 # decoder target seq
 
             yield([encoder_input_sequnce, decoder_input_sequnce], decoder_target_sequnce)            
  
 
 
 def create_seq2seq_model(encoder_vocab_size, decoder_vocab_size, latent_dim):
-    """ Creates seq2seq model using Recurrent Neural Networks(RNN).
-    The encoder consists of an LSTM layer to create encoding of encoder sequnce.
-    The encoder outputs states to decoder.
-    The decoder is also consists of a left-to-right LSTM layer. The decoder LSTM  layer outputs a sequence that
-    are fed to  fully connected layers with softmax activation to predict 
-    output sequence. 
+    """ Creates a seq2seq model using Recurrent Neural Networks(RNN).
+    The encoder consists of a left-to-right LSTM layer and outputs states to decoder.
+    The decoder is also consists of a left-to-right LSTM layer and outputs a sequence that
+    are fed to time distributed fully connected layers with softmax activation to predict 
+    target sequence. 
     Args:
         encoder_vocab_size: number of encoder tokens (i.e., encoder vocab size)
         decoder_vocab_size: size of  decoder tokens (i.e., decoder vocab size)
@@ -115,7 +127,7 @@ def create_seq2seq_model(encoder_vocab_size, decoder_vocab_size, latent_dim):
     return model
 
 def create_seq2seq_inference_model(model, latent_dim):
-    """ Creates a seq2seq inference model by xxtracting Encoder and Decoder model
+    """ Creates a seq2seq inference model by extracting Encoder and Decoder models
      from the input seq2seq model.
     Args:
         model: a seq2seq model
@@ -131,13 +143,13 @@ def create_seq2seq_inference_model(model, latent_dim):
     # 3. This procedure is repteated to predict all output sequnce 
     
     ### Encoder Model
-    encoder_inputs = model.input[0]   # input_1
+    encoder_inputs = model.input[0] 
     encoder_outputs, state_h_enc, state_c_enc = model.get_layer('encoder_lstm').output   # lstm_1
     encoder_states = [state_h_enc, state_c_enc]
     encoder_model = Model(encoder_inputs, encoder_states)
     ### Decoder Model
     ## Decoder State Input
-    decoder_inputs = model.input[1]  # input_2
+    decoder_inputs = model.input[1]
     decoder_state_input_h = Input(shape=(latent_dim,), name='input_3')
     decoder_state_input_c = Input(shape=(latent_dim,), name='input_4')
     decoder_states_inputs = [decoder_state_input_h, decoder_state_input_c]
@@ -156,22 +168,25 @@ def create_seq2seq_inference_model(model, latent_dim):
     return encoder_model, decoder_model
 
 def train_seq2seq_model(model, X_train, X_valid, y_train, y_valid, epochs):
-    """ Compiles and trains the seq2seq model. Train data is fed to model 
+    """ Compiles and trains the seq2seq model. The train data is fed to model
     using a generator function
     Args:
-        model: number of encoder tokens (i.e., encoder vocab size)
+        model: seq2seq model
         X_train: train data input sequnce (conditions)
-        X_valid: train data output sequnce (conditions)
-        y_train: validation input data sequnce (ouputs)
-        y_valid: validation ouput data sequnce (ouputs)
+        X_valid: train data input sequnce (conditions)
+        y_train: validation target sequnce sequnce (ouputs)
+        y_valid: validation target sequnce (ouputs)
         epochs: number of epochs to train model
     Returns:
         model: trained seq2seq model
     """
+
+    # Model is trainined to minimize cross enthrop between true target sequnce
+    # and predicted target sequnce
+    # Optimizer is set to Nadam and accuracy is used as metric
     model.compile(loss='categorical_crossentropy',
                   optimizer='Nadam',
-                  metrics=['acc']
-                  )
+                  metrics=['acc'])
     
     # Creats data genrators to feed train and validation data
     train_data_generator = data_generator(X_train, y_train, batch_size)
@@ -190,23 +205,31 @@ def train_seq2seq_model(model, X_train, X_valid, y_train, y_valid, epochs):
                         validation_steps=len(X_valid)/batch_size)
 
     return model
-
+    
 
 def main():
-    """ The main function to train a seq2seq model
-    1. read dataset
-    2. preproces dataset
-    3. create dictinries to conver input and target sequnces to an integer id
-    4. replace input and outpu sequnce word with an integre id
-    5. pad sequnces with zero to create fixed size input and target sequnces
-    4. create a seq2seq model
-    4. train the model
-    5. save the model and model metadata (inclding dictionaries to conver words to id)
+    """ The main steps to train a seq2seq model:
+    1. Read dataset
+    2. Preproces each sequnce (create standarized sequnces)
+        a. Change QID, CONDITION and OUTPUT text to lowercas
+        b. split QID, CONDITION and OUTPUT text into tokens (words)
+        c. Replace QID tokens in each sample with standrized tokens (i.e., <QID0>, <QID1>, ...)
+        d. Replace digit tokens in each sample with standarized tokens (i.e., <DGT0>, <DGT1>, ...)
+        e. Create standardization dictionary for each sample
+        f. Add special tokens <BOS> and <EOS> to the begining and end of each sequence
+    3. Create dictinries to convert input and target sequnces to an integer id
+    4. Replace input and outpu sequnce tokens with an integre id
+    5. Pad sequnces with zero to create fixed size input and target sequnces
+        a. Input sequnce is pre-padded with zero
+        b. Target sequnce is post-padded 
+    4. Create a seq2seq model
+    4. Train the model
+    5. Save the model and model metadata (inclding dictionaries to conver words to id)
     """
-
-    # construct the argument parser and parse the arguments
+    
+    # Construct the argument parser and parse the arguments 
     ap = argparse.ArgumentParser()
-    ap.add_argument("-p", "--path",   type=str, default=MT_TRAINING_CORPUS_PATH, help="Specify the train data path")
+    ap.add_argument("-p", "--path", type=str, default=MT_TRAINING_CORPUS_PATH, help="Specify the train data path")
     args = vars(ap.parse_args())
     train_data_path = args["path"]
 
@@ -248,9 +271,10 @@ def main():
     model.save(MT_SEQ2SEQ_MODEL_PATH)
     with open(MT_META_DATA_FILE_PATH,'wb') as f:
         pickle.dump([condition_word2id,condition_id2word, output_word2id, output_id2word], f)
-
+    
     print("\nTrained seq2seq model saved in [{}]\n".format(MT_SEQ2SEQ_MODEL_PATH))
     
+
 if __name__ == '__main__':
     main()
 

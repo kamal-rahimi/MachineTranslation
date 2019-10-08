@@ -1,15 +1,11 @@
-
-"""
+""" tools.py
 This file provides some helper functions required to read and prepare data
 for the model
 """
 
-
 import pandas as pd
 import re
-import os
 import numpy as np
-import pickle
 from collections import Counter
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from matplotlib import pyplot as plt
@@ -40,29 +36,48 @@ def write_data(qids, conditions, outputs, data_path):
 
 
 def prepare_data(qids_raw, conditions_raw, outputs_raw):
+    """
+    Prepares data for the model by
+    Args:
+        qids_raw: Pyhon list of raw qid texts
+        conditions_raw: Pyhon list of raw condition texts
+        outputs_raw: Pyhon list of raw output texts
+    Returns:
+        qids: Pyhon list of preprocessed qid sequnces
+        conditions: Pyhon list of preprocessed condition sequnces
+        outputs: Pyhon list of preprocessed output sequnces
+        dictionaries_standardization: Pyhton list of dictionaries used for standardizing samples
+    """
 
     qids = []
     conditions = []
     outputs = []
-    dictionaries_lemanization = []
+    dictionaries_standardization = []
     for qid_raw, condition_raw, output_raw in zip(qids_raw, conditions_raw, outputs_raw):
         qid, condition, output, dictionary = preprocess_sample(qid_raw, condition_raw, output_raw)
         qids.append(qid)
         conditions.append(condition)
         outputs.append(output)
-        dictionaries_lemanization.append(dictionary)
+        dictionaries_standardization.append(dictionary)
 
-    return qids, conditions, outputs, dictionaries_lemanization
+    return qids, conditions, outputs, dictionaries_standardization
 
 def preprocess_sample(qid_raw, condition_raw, output_raw):
-    
+    """ Preproces a sample to create standarized sequnces
+        a. Change qid_raw, condition_raw and output_raw text to lowercas
+        b. split qid_raw, condition_raw and output_raw text into tokens (words)
+        c. Replace qid_raw tokens with standrized tokens (i.e., <QID0>, <QID1>, ...)
+        d. Replace digit tokens with standarized tokens (i.e., <DGT0>, <DGT1>, ...)
+        e. Create standardization dictionary for each sample
+        f. Add special tokens <BOS> and <EOS> to the begining and end of each sequence
+    """
     qid, condition, output = split_to_words(qid_raw, condition_raw, output_raw)
     
-    qid, condition, output, dictionary_lemenization = standardize_words(qid, condition, output)
+    qid, condition, output, dictionary_standardization = standardize_words(qid, condition, output)
 
-    return qid, condition, output, dictionary_lemenization
+    return qid, condition, output, dictionary_standardization
 
-def split_to_words(qid_raw, condition_raw, output_raw):   
+def split_to_words(qid_raw, condition_raw, output_raw):
     qid       = re.split(SPLIT_PATTERN_NO_DILIMITER, str(qid_raw))
     condition = re.split(SPLIT_PATTERN_NO_DILIMITER, str(condition_raw))
     condition = [cond for cond in condition if cond != " " and cond != ""]
@@ -75,10 +90,10 @@ def split_to_words(qid_raw, condition_raw, output_raw):
     return qid, condition, output
 
 def standardize_words(qid, condition, output):
-    dictionary_word_convertion = {}
+    dictionary_standardization = {}
     for index, id in enumerate(qid):
         standard_qid = '<QID{}>'.format(index)
-        dictionary_word_convertion[standard_qid] = qid[index]
+        dictionary_standardization[standard_qid] = qid[index]
         qid[index] = standard_qid
     
         for word_index in range(len(condition)):
@@ -94,7 +109,7 @@ def standardize_words(qid, condition, output):
         if word.isdigit():
             standard_digit = '<DGT{}>'.format(digit_num)
             digit_num += 1
-            dictionary_word_convertion[standard_digit] = word
+            dictionary_standardization[standard_digit] = word
 
             for word_index in range(len(condition)):
                 if condition[word_index] == word:
@@ -108,7 +123,7 @@ def standardize_words(qid, condition, output):
         if word.isdigit():
             standard_digit = '<DGT{}>'.format(digit_num)
             digit_num += 1
-            dictionary_word_convertion[standard_digit] = word
+            dictionary_standardization[standard_digit] = word
             for word_index in range(len(output)):
                 if output[word_index] == word:
                     output[word_index] = standard_digit
@@ -116,13 +131,13 @@ def standardize_words(qid, condition, output):
     condition   = ['<BOS>']  + condition + ['<EOS>']
     output      = ['<BOS>']  + output  + ['<EOS>']
 
-    return qid, condition, output, dictionary_word_convertion
+    return qid, condition, output, dictionary_standardization
 
 
 def create_vocabulary(word_list, max_vocab_size):
     """ Create Vocabulary dictionary
     Args:
-        text(str): inout text
+        text(str): inout word list
         max_vocab_size: maximum number of words in the vocabulary
     Returns:
         word2id(dict): word to id mapping
@@ -138,7 +153,6 @@ def create_vocabulary(word_list, max_vocab_size):
         if word not in word2id:
             word2id[word] = id
             id2word[id] = word
-            print(word)
         if id == max_vocab_size - 1 :
             break
 
@@ -161,6 +175,14 @@ def pad_with_zero(list, max_length, pad_type):
     return padded_list
 
 
+def log_to_shell(index, qid_raw, condition_raw, output_raw, decoded_seqeunce):
+    """ Prints information to shell
+    """
+    print("Sample index",       index)
+    print("QID: ",              qid_raw)
+    print("CONDITION: ",        condition_raw)
+    print("OUTPUT: ",           output_raw,'\n')
+    print("Predicted OUTPUT: ", decoded_seqeunce, '\n\n')
 
 
 
