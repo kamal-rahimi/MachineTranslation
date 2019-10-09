@@ -1,27 +1,24 @@
 """" train.py
-This file reads and preproces the train dataset and creates (and trains) a seq2seq model
+This file reads and preproces the train dataset and builds a seq2seq model
 using Recurrent Neurak Networks to predict a target sequnce from an input sequnce.
-openpyxl
-xlrd
-numpy
-tensorflow
-pandas
-sklearn
 """
+
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
 
 ### Import required packages
 import numpy as np
 import random
-import argparse
 import pickle
 import os
 
 import tensorflow as tf
 from tensorflow.python import keras
-from keras.models import Sequential, load_model, Model, Input
-from keras.layers import Embedding, LSTM, Dense, Activation, Dropout, TimeDistributed, Bidirectional, Lambda
+from keras.models import Model, Input, load_model
+from keras.layers import Embedding, LSTM, Dense, Activation
 from keras.callbacks import ModelCheckpoint
-from keras import backend as K
 
 ## Import helper functions
 from sklearn.model_selection import train_test_split
@@ -57,7 +54,6 @@ num_latent_dim = 40
 # Fraction of data used for validation during training the model
 validation_size = 0.1
 
-
 def data_generator(X, y, batch_size):
     """ Creates a data genrator to feed encoder and decoder input sequnces and decoder
     target sequnce
@@ -85,7 +81,6 @@ def data_generator(X, y, batch_size):
             yield([encoder_input_sequnce, decoder_input_sequnce], decoder_target_sequnce)            
  
 
-
 def create_seq2seq_model(encoder_vocab_size, decoder_vocab_size, latent_dim):
     """ Creates a seq2seq model using Recurrent Neural Networks(RNN).
     The encoder consists of a left-to-right LSTM layer and outputs states to decoder.
@@ -99,7 +94,7 @@ def create_seq2seq_model(encoder_vocab_size, decoder_vocab_size, latent_dim):
     Returns:
         model: seq2seq model
     """
-    
+
     ### Encoder
     ## Input layer
     encoder_inputs = Input(shape=(None, encoder_vocab_size), name='encoder_input')
@@ -163,7 +158,7 @@ def create_seq2seq_inference_model(model, latent_dim):
     decoder_outputs = decoder_dense(decoder_outputs)
 
     decoder_model = Model([decoder_inputs] + decoder_states_inputs,
-                          [decoder_outputs] + decoder_states)
+                            [decoder_outputs] + decoder_states)
 
     return encoder_model, decoder_model
 
@@ -185,8 +180,8 @@ def train_seq2seq_model(model, X_train, X_valid, y_train, y_valid, epochs):
     # and predicted target sequnce
     # Optimizer is set to Nadam and accuracy is used as metric
     model.compile(loss='categorical_crossentropy',
-                  optimizer='Nadam',
-                  metrics=['acc'])
+                    optimizer='Nadam',
+                    metrics=['acc'])
     
     # Creats data genrators to feed train and validation data
     train_data_generator = data_generator(X_train, y_train, batch_size)
@@ -211,7 +206,7 @@ def main():
     """ The main steps to train a seq2seq model:
     1. Read dataset
     2. Preproces each sequnce (create standarized sequnces)
-        a. Change QID, CONDITION and OUTPUT text to lowercas
+        a. Change QID, CONDITION and OUTPUT text to lowercase
         b. split QID, CONDITION and OUTPUT text into tokens (words)
         c. Replace QID tokens in each sample with standrized tokens (i.e., <QID0>, <QID1>, ...)
         d. Replace digit tokens in each sample with standarized tokens (i.e., <DGT0>, <DGT1>, ...)
@@ -226,12 +221,9 @@ def main():
     4. Train the model
     5. Save the model and model metadata (inclding dictionaries to conver words to id)
     """
-    
-    # Construct the argument parser and parse the arguments 
-    ap = argparse.ArgumentParser()
-    ap.add_argument("-p", "--path", type=str, default=MT_TRAINING_CORPUS_PATH, help="Specify the train data path")
-    args = vars(ap.parse_args())
-    train_data_path = args["path"]
+
+    # Train data path
+    train_data_path = MT_TRAINING_CORPUS_PATH
 
     if not os.path.exists(train_data_path):
         print("\n Specified train data path [%s] does not exist\n" % train_data_path)

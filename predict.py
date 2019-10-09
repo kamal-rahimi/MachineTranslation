@@ -4,9 +4,13 @@ and predict the iput for each sample in test dataset. It writes prediction resul
 to a file and print to shell
 """
 
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
+
 ### Import required packages
 import numpy as np
-import argparse
 import pickle
 import os
 
@@ -133,14 +137,30 @@ def decode_sequence_beam(decoder_model, decoder_input, states_value, word2id, se
 
 
 def main():
+    """ The main steps to predict an output sequnce using the seq2seq model:
+    1. Read test dataset
+    2. Preproces each sequnce (create standarized sequnces)
+        a. Change QID and CONDITION text to lowercase
+        b. split QID and CONDITION text into tokens (words)
+        c. Replace QID tokens in each sample with standrized tokens (i.e., <QID0>, <QID1>, ...)
+        d. Replace digit tokens in each sample with standarized tokens (i.e., <DGT0>, <DGT1>, ...)
+        e. Create standardization dictionary for each sample
+        f. Add special tokens <BOS> and <EOS> to the begining and end of each sequence
+    3. Replace condition sequnce tokens with an integre id usng the encoder_word2id dictionary
+    4. Pad condition sequnce with zero to create a fixed size input sequnce
+        a. Input sequnce is pre-padded with zero
+    5. Extract Encoder and Decoder parts of saved seq2seq model
+    6. Use a beam search algorithm to predict the output sequnce
+    7. Reverse predicted output sequnce to words using the decoder_id2word dictionary 
+    8. Revrese Digit and QID standardization from the predicted output
+    9. Save the precited outputs to a file
+    """
 
-    # construct the argument parser and parse the arguments
-    ap = argparse.ArgumentParser()
-    ap.add_argument("-p",  "--path",     type=str, default=MT_TEST_CORPUS_PATH, help="Specify test data path")
-    ap.add_argument("-o",  "--output",   type=str, default=MT_TEST_CORPUS_PATH_WITH_PREDCITION, help="Specify output data path")
-    args = vars(ap.parse_args())
-    test_data_path = args["path"]
-    test_data_output_path = args["output"]
+    # Test data path
+    test_data_path = MT_TEST_CORPUS_PATH
+
+    # Output data path
+    test_data_output_path = MT_TEST_CORPUS_PATH_WITH_PREDCITION
 
     # Make sure an Encoder model exists
     if not os.path.exists(MT_SEQ2SEQ_MODEL_PATH):
@@ -181,7 +201,8 @@ def main():
         decoded_seqeunce = replace_using_dict([decoded_seqeunce], output_id2word)
         decoded_seqeunce = replace_using_dict(decoded_seqeunce, dictionaries_lemanization[sample_index])
 
-        decoded_seqeunce = [seq for seq in decoded_seqeunce[0] if seq != '<PAD>' and seq != '<EOS>']
+        decoded_seqeunce = [seq for seq in decoded_seqeunce[0] if seq != '<PAD>' and seq != '<EOS>'\
+                                                                and '<QID' not in seq and '<DGT' not in seq]
         decoded_seqeunce = reversed(decoded_seqeunce)
         decoded_seqeunce = ''.join(decoded_seqeunce)
 

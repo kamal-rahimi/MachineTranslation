@@ -3,13 +3,15 @@ This file provides some helper functions required to read and prepare data
 for the model
 """
 
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
 import pandas as pd
 import re
 import numpy as np
 from collections import Counter
 from tensorflow.keras.preprocessing.sequence import pad_sequences
-from matplotlib import pyplot as plt
-from wordcloud import WordCloud, STOPWORDS
 
 
 SPLIT_PATTERN_WITH_DILIMITER = r'([`\-=~!@#$%^&*()_+\[\]{};\'\\:"|<,./<>?\n\s])\s*'
@@ -17,8 +19,13 @@ SPLIT_PATTERN_NO_DILIMITER   = r'[`\-=~!@#$%^&*()_+\[\]{};\'\\:"|<,./<>?\n\s]\s*
 
 
 def read_data(data_path):
-    """
-    Reads data from an excel file
+    """ Reads data from an excel file
+    Args:
+        data_path: Input data path
+    Returns:
+        qids_raw: Pyhon list of raw qid texts
+        conditions_raw: Pyhon list of raw condition texts
+        outputs_raw: Pyhon list of raw output texts
     """
     data_set = pd.read_excel(data_path)
     qids_raw       = data_set["QID"].values
@@ -27,8 +34,13 @@ def read_data(data_path):
     return qids_raw, conditions_raw, outputs_raw
 
 def write_data(qids, conditions, outputs, data_path):
-    """
-    Writes data to excel file
+    """ Writes data to an excel file
+    Args:
+        qids: Pyhon list of qid texts
+        conditions: Pyhon list of condition texts
+        outputs: Pyhon list of output texts
+    Return:
+        None
     """
     data_set = pd.DataFrame(list(zip(qids, conditions, outputs)),
                             columns=["QID", "CONDITION", "OUTPUT"])
@@ -36,8 +48,7 @@ def write_data(qids, conditions, outputs, data_path):
 
 
 def prepare_data(qids_raw, conditions_raw, outputs_raw):
-    """
-    Prepares data for the model by
+    """ Prepares data for the model
     Args:
         qids_raw: Pyhon list of raw qid texts
         conditions_raw: Pyhon list of raw condition texts
@@ -78,6 +89,16 @@ def preprocess_sample(qid_raw, condition_raw, output_raw):
     return qid, condition, output, dictionary_standardization
 
 def split_to_words(qid_raw, condition_raw, output_raw):
+    """ Splits input raw texts into words (tokens)
+    Args:
+        qid_raw: raw qid text
+        condition_raw: Pyhon list of raw condition texts
+        output_raw: raw output texts
+    Return:
+        qid: Python array of qid words (tokens)
+        condition: Python array of condition words (tokens)
+        output: Python array of output words (tokens)
+    """
     qid       = re.split(SPLIT_PATTERN_NO_DILIMITER, str(qid_raw))
     condition = re.split(SPLIT_PATTERN_NO_DILIMITER, str(condition_raw))
     condition = [cond for cond in condition if cond != " " and cond != ""]
@@ -90,6 +111,17 @@ def split_to_words(qid_raw, condition_raw, output_raw):
     return qid, condition, output
 
 def standardize_words(qid, condition, output):
+    """ Standarizes a sample by replacing qids and digits with stanadard words
+    Args:
+        qid: Python array of qid words (tokens)
+        condition: Python array of condition words (tokens)
+        output: Python array of output words (tokens)
+    Retursn:
+        qid: Python array of standarized qid words (tokens)
+        condition: Python array of standarized condition words (tokens)
+        output: Python array of standarized output words (tokens)
+        dictionary_standardization: Pyhton dictionary used for standardizing sample
+    """
     dictionary_standardization = {}
     for index, id in enumerate(qid):
         standard_qid = '<QID{}>'.format(index)
@@ -160,73 +192,50 @@ def create_vocabulary(word_list, max_vocab_size):
 
 
 def replace_using_dict(list, dictionary, drop_unknown=False):
-    translated_list = []
+    """ Replaces tokens of the input list using a dictionary
+    Args:
+        list: a python list of word sequences
+        dictionary: a dictionary to convert tokens
+        drop_unknown: a flag to specify whether keep or drop tokens not in dictionary
+    Returns:
+        replaced_list: replaced Pyhthon list of word sequences 
+
+    """
+    replaced_list = []
     for line in list:
         if drop_unknown:
             translated_line = [dictionary[word] for word in line if word in dictionary]
         else:
             translated_line = [dictionary[word] if word in dictionary else word for word in line]
-        translated_list.append(translated_line)
+        replaced_list.append(translated_line)
     
-    return translated_list
+    return replaced_list
 
 def pad_with_zero(list, max_length, pad_type):
+    """ Pad sequnces in the input list with zero
+    Args:
+        list: a Python list of word sequnces
+        max_length: maximum length of each sequence
+        pad_type: whether pad begining or end of the sequnces
+    Return:
+        padded_list: padded list of word sequnces
+    """
     padded_list = pad_sequences(list, maxlen=max_length, padding=pad_type, truncating='post')
     return padded_list
 
 
 def log_to_shell(index, qid_raw, condition_raw, output_raw, decoded_seqeunce):
     """ Prints information to shell
+    Args:
+        qid_raw: raw qid text
+        condition_raw: Pyhon list of raw condition texts
+        output_raw: raw output texts
+        decoded_seqeunce: decoded output sequnce
+    Return:
+        None
     """
     print("Sample index",       index)
     print("QID: ",              qid_raw)
     print("CONDITION: ",        condition_raw)
     print("OUTPUT: ",           output_raw,'\n')
     print("Predicted OUTPUT: ", decoded_seqeunce, '\n\n')
-
-
-
-def plot_word_cloud(word_list):
-    words = ' '.join(word_list)
-    wordcloud = WordCloud(width = 800, height = 800, 
-                    background_color ='white',
-                    stopwords = None,
-                    collocations = False,
-                    regexp=None,
-                    min_word_length=0,
-                    min_font_size = 10).generate(words) 
-                         
-    #plt.figure(figsize = (8, 8), facecolor = None) 
-    plt.imshow(wordcloud) 
-    plt.axis("off") 
-    plt.tight_layout(pad = 0) 
-    plt.show()
-
-
-def plot_length_distribution(list, max_length=100, cdf=False):
-    length_count = [0 for _ in range(max_length)]
-    #item =[list]
-    for item in list:
-        item_length = len(item)
-        if item_length < max_length:
-            length_count[item_length] += 1
-
-    length_count = np.array(length_count)
-    length_freq = length_count/np.sum(length_count)
-    if cdf:
-        length_freq = np.cumsum(length_freq)
-    plt.plot(length_freq)
-    plt.show()
-
-
-    """
-    print(QIDs_process[:2],"\n")
-    print(CONDITIONs_process[:2],"\n")
-    print(CONDITIONs[:2],"\n")
-    print(OUTPUTs_process[:2])
-    
-    all_word = [word for i in range(len(CONDITIONs_process)) for word in CONDITIONs_process[i]]
-    plot_word_cloud(all_word)
-    all_word = [word for i in range(len(OUTPUTs_process)) for word in OUTPUTs_process[i]]
-    plot_word_cloud(all_word)
-    """
