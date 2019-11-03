@@ -14,7 +14,8 @@ CONDITION:  IF QE2 = NOT 99, CONTINUE, OTHERWISE END AT hQK
 OUTPUT:  QE2.notany(99) 
 ```
 
-## Designed Neural ModelModel overview:
+## Designed Neural Network Model
+### Model overview
 A  sequence-to-sequence (seq2seq) model is trainined using Recurrent Neural Networks (RNNs) with with Long Short Term Memory (LSTM).
 
 The model has an Encoder cosistsing of LSTM layers to extract latent representation of the input sequence. The Decoder consists of LSTM layers followed by a Fully-connected layer. Finally a Softmax Activation function is used to predict the different sequence words probabilities of each time step of target sequence.
@@ -25,10 +26,47 @@ During prediction, the encoder hidden state and a start-of-sequence token is fed
 
 To increase the prediction accuracy of the model a beam search algorithms is used.
 
+### Training the model
+The main steps to train a seq2seq model:
+1. Read dataset
+2. Pre-process each sequence (create standardized sequences)
+   - Change QID, CONDITION and OUTPUT text to lowercase
+   - Split QID, CONDITION and OUTPUT text into tokens (words)
+   - Replace QID tokens in each sample with standardized tokens (i.e., <QID0>, <QID1>, ...)
+   - Replace digit tokens in each sample with standardized tokens (i.e., <DGT0>, <DGT1>, ...)
+   - Create standardization dictionary for each sample
+   - Add special tokens <BOS> and <EOS> to the beginning and end of each sequence
+3. Create dictionaries to convert input and target sequences to an integer id
+4. Replace input and output sequence tokens with an integer id
+5. Pad sequences with zero to create fixed size input and target sequences
+   - Input sequence is pre-padded with zero
+   - Target sequence is post-padded 
+4. Create a seq2seq model
+5. Train the model
+6. Save the model and model metadata (including dictionaries to convert words to id)
 
-## How to use the model
-### Train the model:
+### Prediction using the model
+The main steps to predict an output sequence using the seq2seq model:
+1. Read test dataset
+2. Pre-process each sequence (create standardized sequences)
+   - Change QID and CONDITION text to lowercase
+   - Split QID and CONDITION text into tokens (words)
+   - Replace QID tokens in each sample with standardized tokens (i.e., <QID0>, <QID1>, ...)
+   - Replace digit tokens in each sample with standardized tokens (i.e., <DGT0>, <DGT1>, ...)
+   - Create standardization dictionary for each sample
+   - Add special tokens <BOS> and <EOS> to the beginning and end of each sequence
+3. Replace condition sequence tokens with an integer id using the encoder_word2id dictionary
+4. Pad condition sequence with zero to create a fixed size input sequence
+   - Input sequence is pre-padded with zero
+5. Extract Encoder and Decoder parts of saved seq2seq model
+6. Use a beam search algorithm to predict the output sequence
+7. Reverse predicted output sequence ids to words using the decoder_id2word dictionary 
+8. Reverse Digit and QID standardization from the predicted output
+9. Save the predicted outputs to a file
 
+
+## How to Use the Model
+### Train the model
 Model can be trained by running the python script train.py. The required packages are included in “requirement.txt”
 ```
 $ pip3 install requirements.txt
