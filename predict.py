@@ -17,8 +17,8 @@ import os
 from tensorflow.python import keras
 from keras.models import load_model
 
-MT_TEST_CORPUS_PATH                 = "./data/MT_test_submission.xlsx"
-MT_TEST_CORPUS_PATH_WITH_PREDCITION = "./data/MT_test_submission_with_predcitions.xlsx"
+MT_TEST_CORPUS_PATH                 = "./data/MT_test.xlsx"
+MT_TEST_CORPUS_PATH_WITH_PREDCITION = "./data/MT_test_with_predcitions.xlsx"
 
 ## Import helper functions and constants
 from tools import read_data, prepare_data, replace_using_dict, pad_with_zero, write_data, log_to_shell
