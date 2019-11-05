@@ -24,7 +24,7 @@ To train the network, the input sequence is fed to Encoder. The encoder hidden s
 
 During prediction, the encoder hidden state and a start-of-sequence token is fed to the decoder, the first predicted sequence by decoder is then being fed back to it for the next step. This procedure will continue until a special token (end-of-sequence token) is predicted or maximum sequence length is reached.
 
-To increase the prediction accuracy of the model a beam search algorithms is used.
+To increase the prediction accuracy of the model a **beam search** algorithms is used.
 
 ### Training the model
 The main steps to train a seq2seq model:
@@ -32,8 +32,8 @@ The main steps to train a seq2seq model:
 2. Pre-process each sequence (create standardized sequences)
    - Change QID, CONDITION and OUTPUT text to lowercase
    - Split QID, CONDITION and OUTPUT text into tokens (words)
-   - Replace QID tokens in each sample with standardized tokens (i.e., <QID0>, <QID1>, ...)
-   - Replace digit tokens in each sample with standardized tokens (i.e., <DGT0>, <DGT1>, ...)
+   - Replace QID tokens in each sample with standardized tokens (i.e., \<QID0\>, \<QID1\>, ...)
+   - Replace digit tokens in each sample with standardized tokens (i.e., \<DGT0\>, \<DGT1\>, ...)
    - Create standardization dictionary for each sample
    - Add special tokens <BOS> and <EOS> to the beginning and end of each sequence
 3. Create dictionaries to convert input and target sequences to an integer id
@@ -51,8 +51,8 @@ The main steps to predict an output sequence using the seq2seq model:
 2. Pre-process each sequence (create standardized sequences)
    - Change QID and CONDITION text to lowercase
    - Split QID and CONDITION text into tokens (words)
-   - Replace QID tokens in each sample with standardized tokens (i.e., <QID0>, <QID1>, ...)
-   - Replace digit tokens in each sample with standardized tokens (i.e., <DGT0>, <DGT1>, ...)
+   - Replace QID tokens in each sample with standardized tokens (i.e., \<QID0\>, \<QID1\>, ...)
+   - Replace digit tokens in each sample with standardized tokens (i.e., <DGT0>, \<DGT1\>, ...)
    - Create standardization dictionary for each sample
    - Add special tokens <BOS> and <EOS> to the beginning and end of each sequence
 3. Replace condition sequence tokens with an integer id using the encoder_word2id dictionary
@@ -80,7 +80,7 @@ $ python3 predict.py
 The model output predicstions in shel and writes the outputs to a separate file in test data path.
 
 ## Model Performance
-The trained model provides accuracy of about 95% on the validation set which is remarkable considering that train dataset is not large.
+The trained model provides **accuracy of about 95% on the validation set** which is remarkable considering that train dataset is not large.
 The following are some of the model predictions on training data:
 
 ```
